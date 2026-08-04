@@ -1,0 +1,18 @@
+# Local backups & editor/OS cruft
+index-modernist-backup.html
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencies (if tooling is added later)
+node_modules/
+
+# Leftover design-system scaffold — the site (index.html) is self-contained
+_ds/
+ds-base.js
+image-slot.js
+.thumbnail
+
+# Duplicate CV — index.html links only to uploads/rafsan_cv.docx
+uploads/Rafsan_Raiyan_cv (2).docx
