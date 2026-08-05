@@ -311,7 +311,7 @@ html[data-theme="light"] .i-moon { display: none; }
    HERO
    ═══════════════════════════════════════════════════════════════ */
 .hero { padding: clamp(112px, 15vw, 176px) 0 clamp(44px, 6vw, 76px); position: relative; overflow: clip; }
-.hero-inner { will-change: transform, opacity; position: relative; }
+.hero-inner { will-change: transform, opacity; position: relative; z-index: 1; }
 
 .status {
   display: inline-flex; align-items: center; gap: 9px;
@@ -342,64 +342,17 @@ html[data-theme="light"] .contact-h,
 html[data-theme="light"] .stat-n .count,
 html[data-theme="light"] .press-src { color: var(--accent); }
 
-.growth { position: absolute; z-index: 0; pointer-events: none; left: -3%; width: 106%; top: 2%; height: 118%; opacity: .52; }
-html[data-theme="light"] .growth { opacity: .46; }
-@media (max-width: 640px) { .growth { opacity: .3; } }
-.g-a { stop-color: var(--accent); }
-.g-b { stop-color: #4d86ff; }
-.growth .bars rect {
-  fill: var(--ink); opacity: .06;
-  transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0);
-  animation: barGrow .85s var(--ease) forwards;
+/* interactive particle-wave behind the hero: a perspective wire-mesh in
+   the brand accent that ripples toward the pointer/touch. Drawn on canvas
+   by the script at the end of the file. Pointer-events stay off — the
+   .hero section captures the pointer and forwards coordinates. */
+.wave {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; pointer-events: none;
+  -webkit-mask-image: radial-gradient(125% 82% at 50% 60%, #000 42%, transparent 84%);
+  mask-image: radial-gradient(125% 82% at 50% 60%, #000 42%, transparent 84%);
 }
-.growth .bars rect:nth-child(1) { animation-delay: .30s; }
-.growth .bars rect:nth-child(2) { animation-delay: .40s; }
-.growth .bars rect:nth-child(3) { animation-delay: .50s; }
-.growth .bars rect:nth-child(4) { animation-delay: .60s; }
-.growth .bars rect:nth-child(5) { animation-delay: .70s; }
-.growth .bars rect:nth-child(6) { animation-delay: .80s; }
-.growth .bars rect:nth-child(7) { animation-delay: .90s; }
-.growth .bars rect:nth-child(8) { animation-delay: 1.0s; }
-@keyframes barGrow { to { transform: scaleY(1); } }
-.growth .trend {
-  fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
-  vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1;
-  animation: draw 2.6s var(--ease) .45s forwards;
-}
-@keyframes draw { to { stroke-dashoffset: 0; } }
-.growth .area { opacity: 0; animation: areaIn 1.6s var(--ease) 1.6s forwards; }
-@keyframes areaIn { to { opacity: 1; } }
-.growth .pts circle {
-  fill: var(--accent); opacity: 0;
-  transform-box: fill-box; transform-origin: 50% 50%; transform: scale(0);
-  animation: pop .5s var(--ease) forwards;
-}
-.growth .pts circle:nth-child(1) { animation-delay: .85s; }
-.growth .pts circle:nth-child(2) { animation-delay: 1.11s; }
-.growth .pts circle:nth-child(3) { animation-delay: 1.37s; }
-.growth .pts circle:nth-child(4) { animation-delay: 1.63s; }
-.growth .pts circle:nth-child(5) { animation-delay: 1.89s; }
-.growth .pts circle:nth-child(6) { animation-delay: 2.15s; }
-.growth .pts circle:nth-child(7) { animation-delay: 2.41s; }
-@keyframes pop { to { opacity: .85; transform: scale(1); } }
-.growth .now {
-  fill: var(--accent); opacity: 0;
-  transform-box: fill-box; transform-origin: 50% 50%; transform: scale(0);
-  animation: pop .5s var(--ease) 2.75s forwards;
-}
-.growth .ping {
-  fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; opacity: 0;
-  transform-box: fill-box; transform-origin: 50% 50%;
-  animation: ping 2.8s ease-out 3.25s infinite;
-}
-@keyframes ping { 0% { transform: scale(.6); opacity: .7; } 70%, 100% { transform: scale(3.4); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) {
-  .growth .bars rect { transform: scaleY(1); animation: none; }
-  .growth .trend { stroke-dashoffset: 0; animation: none; }
-  .growth .area  { opacity: 1; animation: none; }
-  .growth .pts circle, .growth .now { opacity: .85; transform: none; animation: none; }
-  .growth .ping { display: none; }
-}
+@media (max-width: 640px) { .wave { opacity: .8; } }
 
 /* ── rotating seal, the reference site's spinning badge ── */
 .seal {
@@ -1825,6 +1778,7 @@ html[data-theme="light"] .growth { opacity: .46; }
 
 <!-- ═══════════════ HERO ═══════════════ -->
 <section class="hero">
+  <canvas class="wave" id="wave" aria-hidden="true"></canvas>
   <div class="wrap hero-inner" id="heroInner">
     <span class="status" data-r><span class="dot" aria-hidden="true"></span> Available on-site &amp; remote worldwide</span>
 
@@ -1839,42 +1793,6 @@ html[data-theme="light"] .growth { opacity: .46; }
     </div>
 
     <div class="h1-wrap">
-      <svg class="growth" viewBox="0 0 800 320" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="gLine" x1="0" y1="1" x2="1" y2="0">
-            <stop class="g-a" offset="0%"   stop-opacity="0" />
-            <stop class="g-a" offset="30%"  stop-opacity="1" />
-            <stop class="g-b" offset="100%" stop-opacity="1" />
-          </linearGradient>
-          <linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1">
-            <stop class="g-a" offset="0%"   stop-opacity=".26" />
-            <stop class="g-a" offset="100%" stop-opacity="0" />
-          </linearGradient>
-        </defs>
-        <g class="bars">
-          <rect x="34"  y="286" width="26" height="34"  />
-          <rect x="134" y="272" width="26" height="48"  />
-          <rect x="234" y="278" width="26" height="42"  />
-          <rect x="334" y="248" width="26" height="72"  />
-          <rect x="434" y="232" width="26" height="88"  />
-          <rect x="534" y="240" width="26" height="80"  />
-          <rect x="634" y="196" width="26" height="124" />
-          <rect x="734" y="152" width="26" height="168" />
-        </g>
-        <path class="area" fill="url(#gFill)"
-              d="M0 280 L100 258 L200 268 L300 225 L400 205 L500 215 L600 150 L700 112 L800 52 L800 320 L0 320 Z" />
-        <path class="trend" stroke="url(#gLine)" pathLength="1"
-              d="M0 280 L100 258 L200 268 L300 225 L400 205 L500 215 L600 150 L700 112 L800 52" />
-        <g class="pts">
-          <circle cx="100" cy="258" r="4" /><circle cx="200" cy="268" r="4" />
-          <circle cx="300" cy="225" r="4" /><circle cx="400" cy="205" r="4" />
-          <circle cx="500" cy="215" r="4" /><circle cx="600" cy="150" r="4" />
-          <circle cx="700" cy="112" r="4" />
-        </g>
-        <circle class="ping" cx="800" cy="52" r="6" />
-        <circle class="now"  cx="800" cy="52" r="5.5" />
-      </svg>
-
       <h1 class="h1 dsp" id="heroH1">
         <span class="rl"><span>Full-stack</span></span>
         <span class="rl"><span>developer &amp;</span></span>
@@ -2679,6 +2597,109 @@ html[data-theme="light"] .growth { opacity: .46; }
   }
 
   document.getElementById("yr").textContent = new Date().getFullYear();
+
+  /* ── hero particle-wave ─────────────────────────────────────
+     A perspective grid of points that undulates as a wave and ripples
+     toward the pointer/touch. Rendered as a thin wire mesh (horizontal
+     lines + tiny vertices) in the brand accent, not round bubbles.      */
+  (() => {
+    const canvas = document.getElementById("wave");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: true });
+    const hero = canvas.closest(".hero");
+
+    // brand accent, re-read whenever the theme flips
+    let accent = "255,18,59";
+    const readAccent = () => {
+      const hex = getComputedStyle(root).getPropertyValue("--accent").trim();
+      const m = hex.replace("#", "");
+      if (m.length === 6) {
+        accent = [0, 2, 4].map((i) => parseInt(m.slice(i, i + 2), 16)).join(",");
+      }
+    };
+    readAccent();
+    new MutationObserver(readAccent).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+
+    let W = 0, H = 0, dpr = 1;
+    const resize = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      W = hero.clientWidth; H = hero.clientHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + "px"; canvas.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    addEventListener("resize", resize, { passive: true });
+
+    // pointer, tracked over the hero; eased so the ripple trails smoothly
+    let pxT = 0.5, pyT = 0.5, px = 0.5, py = 0.5, pStr = 0;
+    const move = (e) => {
+      const r = hero.getBoundingClientRect();
+      const pt = e.touches ? e.touches[0] : e;
+      pxT = (pt.clientX - r.left) / r.width;
+      pyT = (pt.clientY - r.top) / r.height;
+      pStr = 1;
+    };
+    hero.addEventListener("pointermove", move, { passive: true });
+    hero.addEventListener("pointerleave", () => { pStr = 0; }, { passive: true });
+
+    // grid sized to the viewport (fewer points on small / low-power screens)
+    const COLS = innerWidth < 680 ? 30 : innerWidth < 1100 ? 44 : 56;
+    const ROWS = innerWidth < 680 ? 16 : 22;
+
+    const draw = (t) => {
+      ctx.clearRect(0, 0, W, H);
+      // ease pointer toward its target
+      px += (pxT - px) * 0.06; py += (pyT - py) * 0.06;
+      const horizon = H * 0.30;              // where the plane starts, up top
+      const cx = W * 0.5;
+      const pointerX = px * W, pointerY = py * H;
+
+      for (let r = 0; r < ROWS; r++) {
+        const depth = r / (ROWS - 1);        // 0 far → 1 near
+        const rowY = horizon + Math.pow(depth, 1.7) * (H - horizon) * 0.95;
+        const spread = (0.22 + depth * 1.15) * W * 0.62;
+        const alpha = (0.05 + depth * 0.5);
+        let prev = null;
+
+        for (let c = 0; c < COLS; c++) {
+          const u = c / (COLS - 1);
+          const worldX = (u - 0.5) * 2;       // -1 … 1
+          let x = cx + worldX * spread;
+          // travelling wave, taller as it nears the viewer
+          let lift = Math.sin(worldX * 3.4 + t * 0.0013 + r * 0.42) * (10 + depth * 26);
+          lift += Math.sin(worldX * 7.1 - t * 0.0009) * depth * 8;
+          let y = rowY - lift;
+
+          // pointer ripple: points near the cursor rise and brighten
+          const dx = x - pointerX, dy = y - pointerY;
+          const d2 = dx * dx + dy * dy;
+          const sigma = 150;
+          const bump = pStr * Math.exp(-d2 / (2 * sigma * sigma));
+          y -= bump * 34;
+          const a = Math.min(alpha + bump * 0.5, 0.9);
+
+          // thin wire line to the previous point in the row
+          if (prev) {
+            ctx.strokeStyle = "rgba(" + accent + "," + (a * 0.55) + ")";
+            ctx.lineWidth = 0.6 + depth * 0.5;
+            ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(x, y); ctx.stroke();
+          }
+          // small vertex dot
+          const sz = (0.5 + depth * 1.3) * (1 + bump * 1.4);
+          ctx.fillStyle = "rgba(" + accent + "," + a + ")";
+          ctx.beginPath(); ctx.arc(x, y, sz, 0, 6.2832); ctx.fill();
+          prev = { x, y };
+        }
+      }
+      if (pStr > 0 && pxT === px) pStr *= 0.94;  // let a touch ripple fade
+      if (!reduced) raf = requestAnimationFrame(draw);
+    };
+
+    let raf;
+    // reduced-motion: draw one calm static frame and stop; else animate
+    raf = requestAnimationFrame(draw);
+  })();
 })();
 </script>
 
