@@ -2432,8 +2432,9 @@ html[data-theme="light"] .press-src { color: var(--accent); }
     const max = document.documentElement.scrollHeight - innerHeight;
     progress.style.transform = "scaleX(" + (max > 0 ? Math.min(y / max, 1) : 0) + ")";
     if (!reduced && y < innerHeight) {
-      heroIn.style.transform = "translate3d(0," + y * 0.26 + "px,0)";
-      heroIn.style.opacity   = String(Math.max(1 - y / (innerHeight * 0.72), 0));
+      // gentle parallax only — no opacity fade, so the description and CTAs
+      // stay fully visible as you scroll instead of vanishing
+      heroIn.style.transform = "translate3d(0," + y * 0.12 + "px,0)";
     }
   };
   const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
@@ -2651,7 +2652,7 @@ html[data-theme="light"] .press-src { color: var(--accent); }
       ctx.clearRect(0, 0, W, H);
       // ease pointer toward its target
       px += (pxT - px) * 0.06; py += (pyT - py) * 0.06;
-      const horizon = H * 0.30;              // where the plane starts, up top
+      const horizon = H * 0.44;              // plane sits in the lower half, clear of the title
       const cx = W * 0.5;
       const pointerX = px * W, pointerY = py * H;
 
@@ -2659,7 +2660,7 @@ html[data-theme="light"] .press-src { color: var(--accent); }
         const depth = r / (ROWS - 1);        // 0 far → 1 near
         const rowY = horizon + Math.pow(depth, 1.7) * (H - horizon) * 0.95;
         const spread = (0.22 + depth * 1.15) * W * 0.62;
-        const alpha = (0.05 + depth * 0.5);
+        const alpha = (0.03 + depth * 0.26);   // subtle — a backdrop, never competing with text
         let prev = null;
 
         for (let c = 0; c < COLS; c++) {
@@ -2667,17 +2668,17 @@ html[data-theme="light"] .press-src { color: var(--accent); }
           const worldX = (u - 0.5) * 2;       // -1 … 1
           let x = cx + worldX * spread;
           // travelling wave, taller as it nears the viewer
-          let lift = Math.sin(worldX * 3.4 + t * 0.0013 + r * 0.42) * (10 + depth * 26);
-          lift += Math.sin(worldX * 7.1 - t * 0.0009) * depth * 8;
+          let lift = Math.sin(worldX * 3.4 + t * 0.0011 + r * 0.42) * (8 + depth * 18);
+          lift += Math.sin(worldX * 7.1 - t * 0.0008) * depth * 6;
           let y = rowY - lift;
 
           // pointer ripple: points near the cursor rise and brighten
           const dx = x - pointerX, dy = y - pointerY;
           const d2 = dx * dx + dy * dy;
-          const sigma = 150;
+          const sigma = 160;
           const bump = pStr * Math.exp(-d2 / (2 * sigma * sigma));
-          y -= bump * 34;
-          const a = Math.min(alpha + bump * 0.5, 0.9);
+          y -= bump * 22;
+          const a = Math.min(alpha + bump * 0.28, 0.5);
 
           // thin wire line to the previous point in the row
           if (prev) {
@@ -2686,7 +2687,7 @@ html[data-theme="light"] .press-src { color: var(--accent); }
             ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(x, y); ctx.stroke();
           }
           // small vertex dot
-          const sz = (0.5 + depth * 1.3) * (1 + bump * 1.4);
+          const sz = (0.45 + depth * 1.1) * (1 + bump * 0.8);
           ctx.fillStyle = "rgba(" + accent + "," + a + ")";
           ctx.beginPath(); ctx.arc(x, y, sz, 0, 6.2832); ctx.fill();
           prev = { x, y };
