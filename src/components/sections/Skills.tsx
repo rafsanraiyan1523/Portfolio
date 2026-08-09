@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
+import StackSphere from "@/components/ui/StackSphere";
 import { skills } from "@/lib/data";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -32,7 +33,11 @@ export default function Skills() {
           </Reveal>
         </div>
 
-        <div className="mt-16 grid gap-x-12 gap-y-10 md:mt-24 md:grid-cols-2 lg:grid-cols-3">
+        <Reveal delay={0.1} className="mt-16 md:mt-20">
+          <StackSphere />
+        </Reveal>
+
+        <div className="mt-4 grid gap-x-12 gap-y-10 md:mt-16 md:grid-cols-2 lg:grid-cols-3">
           {skills.map((group, gi) => (
             <Reveal key={group.group} delay={(gi % 3) * 0.08} amount={0.2}>
               <div className="group">
