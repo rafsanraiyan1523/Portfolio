@@ -29,7 +29,6 @@ export const person = {
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/rafsan-raiyan/", handle: "in/rafsan-raiyan" },
     { label: "GitHub", href: "https://github.com/rafsanraiyan1523", handle: "@rafsanraiyan1523" },
-    { label: "Webflow", href: "https://rafsans-portfolio.webflow.io/", handle: "rafsans-portfolio" },
     { label: "Email", href: "mailto:rafsanraiyan00@gmail.com", handle: "rafsanraiyan00@gmail.com" },
   ],
 } as const;
