@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useRef } from "react";
 
+import ProjectScreenshot from "@/components/ui/ProjectScreenshot";
 import ProjectVisual from "@/components/ui/ProjectVisual";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -256,7 +257,11 @@ function StackCard({
             transition={{ duration: 0.9, ease: EASE }}
             className="relative"
           >
-            <ProjectVisual variant={index} accent={project.accent} />
+            {project.image ? (
+              <ProjectScreenshot src={project.image} alt={`${project.name} interface`} />
+            ) : (
+              <ProjectVisual variant={index} accent={project.accent} />
+            )}
           </motion.div>
         </div>
       </motion.article>

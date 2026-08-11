@@ -132,9 +132,31 @@ export type Project = {
   accent: string;
   ink: string;
   links?: readonly { label: string; href: string }[];
+  /** Real product screenshot — falls back to the abstract ProjectVisual mockup when absent. */
+  image?: string;
 };
 
 export const projects: readonly Project[] = [
+  {
+    id: "assignment-hub",
+    name: "Assignment Hub",
+    category: "Full-stack assignment management system",
+    tagline: "Assignments and submissions, organized in one place",
+    description:
+      "A clean-architecture LMS for schools — role-based workspaces for admins, teachers and students, with a draft-to-publish workflow and deadlines, marks and feedback enforced server-side, not just in the UI.",
+    stack: ["Next.js", "ASP.NET Core", "PostgreSQL", "TypeScript"],
+    results: [
+      { value: "3", label: "Role-based workspaces" },
+      { value: "RBAC", label: "Server-enforced access" },
+      { value: "Full", label: "Draft-to-grading flow" },
+    ],
+    accent: "#6366F1",
+    ink: "#ffffff",
+    links: [
+      { label: "Source", href: "https://github.com/rafsanraiyan1523/Assignment-Hub" },
+    ],
+    image: "/projects/assignment-hub.png",
+  },
   {
     id: "deshi-bideshi",
     name: "Deshi-Bideshi Kitchen",
