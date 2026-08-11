@@ -257,8 +257,12 @@ function StackCard({
             transition={{ duration: 0.9, ease: EASE }}
             className="relative"
           >
-            {project.image ? (
-              <ProjectScreenshot src={project.image} alt={`${project.name} interface`} />
+            {project.image && project.imageSize ? (
+              <ProjectScreenshot
+                src={project.image}
+                size={project.imageSize}
+                alt={`${project.name} interface`}
+              />
             ) : (
               <ProjectVisual variant={index} accent={project.accent} />
             )}

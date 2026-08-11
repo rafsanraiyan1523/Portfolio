@@ -134,6 +134,8 @@ export type Project = {
   links?: readonly { label: string; href: string }[];
   /** Real product screenshot — falls back to the abstract ProjectVisual mockup when absent. */
   image?: string;
+  /** The image's actual pixel size, so it renders at its own aspect ratio — never cropped. */
+  imageSize?: readonly [width: number, height: number];
 };
 
 export const projects: readonly Project[] = [
@@ -156,6 +158,7 @@ export const projects: readonly Project[] = [
       { label: "Source", href: "https://github.com/rafsanraiyan1523/Assignment-Hub" },
     ],
     image: "/projects/assignment-hub.png",
+    imageSize: [1912, 861],
   },
   {
     id: "deshi-bideshi",
@@ -173,6 +176,8 @@ export const projects: readonly Project[] = [
     accent: "#FF6B4A",
     ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/deshi_bideshi" }],
+    image: "/projects/deshi-bideshi.png",
+    imageSize: [1407, 745],
   },
   {
     id: "r3-studio",
@@ -190,6 +195,8 @@ export const projects: readonly Project[] = [
     accent: "#7C6BFF",
     ink: "#ffffff",
     links: [{ label: "Live site", href: "https://r3-studio.vercel.app/" }],
+    image: "/projects/r3-studio.png",
+    imageSize: [767, 856],
   },
   {
     id: "e-lectronix",
