@@ -167,16 +167,32 @@ export default function Contact() {
                 </button>
               </div>
 
-              <div className="bg-ink px-5 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-paper/40">
-                  Phone / WhatsApp
-                </p>
+              <div className="flex items-center justify-between gap-4 bg-ink px-5 py-4">
+                <div className="min-w-0">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-paper/40">
+                    Phone / WhatsApp
+                  </p>
+                  <a
+                    href={`tel:${person.phoneHref}`}
+                    data-cursor="hover"
+                    className="link-underline mt-1 block text-sm text-paper md:text-base"
+                  >
+                    {person.phone}
+                  </a>
+                </div>
                 <a
-                  href={`tel:${person.phoneHref}`}
+                  href={`https://wa.me/${person.whatsapp}?text=${encodeURIComponent(
+                    `Hi ${person.firstName}, I found your portfolio and wanted to connect.`,
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   data-cursor="hover"
-                  className="link-underline mt-1 block text-sm text-paper md:text-base"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-paper/25 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors hover:border-lime hover:text-lime"
                 >
-                  {person.phone}
+                  <svg viewBox="0 0 16 16" fill="currentColor" className="size-3">
+                    <path d="M8 1a7 7 0 0 0-6.05 10.5L1 15l3.6-.94A7 7 0 1 0 8 1Zm0 1.4a5.6 5.6 0 0 1 4.75 8.56l-.16.25.31 1.86-1.9-.5-.24.14A5.6 5.6 0 1 1 8 2.4Zm-2.4 2.5c-.14 0-.36.05-.55.27-.19.21-.72.7-.72 1.72s.74 2 .84 2.14c.1.14 1.44 2.3 3.6 3.13 1.78.69 2.14.55 2.53.52.39-.04 1.26-.51 1.44-1.01.18-.5.18-.92.13-1.01-.05-.09-.19-.14-.38-.24-.2-.1-1.16-.57-1.34-.64-.18-.06-.31-.09-.44.1-.13.19-.5.63-.62.77-.11.13-.23.15-.42.05-.2-.1-.83-.3-1.58-.97-.58-.52-.98-1.16-1.09-1.36-.11-.19-.01-.3.09-.4.09-.09.2-.23.3-.35.1-.11.13-.19.2-.32.06-.13.03-.24-.02-.34-.05-.1-.44-1.08-.61-1.47-.16-.39-.32-.33-.44-.34l-.38-.01Z" />
+                  </svg>
+                  WhatsApp
                 </a>
               </div>
 
