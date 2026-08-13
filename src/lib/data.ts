@@ -139,6 +139,27 @@ export type Project = {
 
 export const projects: readonly Project[] = [
   {
+    id: "brand-extractor",
+    name: "Brand Extractor",
+    category: "Client-side brand analysis tool",
+    tagline: "Paste a URL. Get the whole brand system.",
+    description:
+      "A client-side tool that scrapes a live site for its identity, palette, typography, tech signals and voice — then exports the results as JSON, CSS or plain text, with a history panel to revisit past extractions.",
+    stack: ["React", "Vite", "Tailwind CSS", "Django"],
+    results: [
+      { value: "5", label: "Brand signals extracted" },
+      { value: "3", label: "Export formats" },
+      { value: "Live", label: "Extraction history" },
+    ],
+    accent: "#E8C547",
+    ink: "#0d0d0f",
+    links: [
+      { label: "Source", href: "https://github.com/rafsanraiyan1523/brand-extractor" },
+    ],
+    image: "/projects/brand-extractor.png",
+    imageSize: [743, 856],
+  },
+  {
     id: "assignment-hub",
     name: "Assignment Hub",
     category: "Full-stack assignment management system",
@@ -213,23 +234,6 @@ export const projects: readonly Project[] = [
     accent: "#2ED3B7",
     ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/E-Lectronix" }],
-  },
-  {
-    id: "enrollment",
-    name: "Student Enrollment System",
-    category: "Academic management system",
-    tagline: "Enrollment analytics for institutional planning",
-    description:
-      "An enrollment platform with graph analytics and interactive dashboards, built to support data-driven institutional planning and reporting.",
-    stack: ["PHP", "MySQL", "Role-based access", "Analytics"],
-    results: [
-      { value: "Graph", label: "Analytics engine" },
-      { value: "Multi", label: "Role access" },
-      { value: "Live", label: "Dashboards" },
-    ],
-    accent: "#FFB020",
-    ink: "#0d0d0f",
-    links: [{ label: "Source", href: "https://github.com/rafsanraiyan23/database_management" }],
   },
   {
     id: "post-office",
