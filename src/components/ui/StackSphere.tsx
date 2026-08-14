@@ -40,6 +40,11 @@ function coprimeStride(n: number): number {
  * permutation rather than in array order — otherwise the first few entries
  * (which also get the largest weight tier below) would all land near the same
  * pole instead of scattered across the globe.
+ *
+ * `y` is deliberately kept off the exact poles (`(2*slot+1)/n` rather than the
+ * more common `slot/(n-1)`), which would otherwise put slot 0 at y = 1 exactly
+ * — a point sitting *on* the rotation axis that never appears to move as the
+ * sphere spins, which reads as a frozen/broken word rather than a rotating one.
  */
 function fibonacciSphere(labels: readonly string[]): Point[] {
   const n = labels.length;
@@ -48,7 +53,7 @@ function fibonacciSphere(labels: readonly string[]): Point[] {
 
   return labels.map((label, i) => {
     const slot = (i * stride) % n;
-    const y = n === 1 ? 0 : 1 - (slot / (n - 1)) * 2;
+    const y = n === 1 ? 0 : 1 - (2 * slot + 1) / n;
     const r = Math.sqrt(Math.max(0, 1 - y * y));
     const theta = golden * slot;
     const weight: Point["weight"] = i < 4 ? 3 : i < 12 ? 2 : 1;
@@ -80,6 +85,7 @@ export default function StackSphere({ className }: { className?: string }) {
   const angleRef = useRef(0);
   const radiusRef = useRef(150);
   const pausedRef = useRef(false);
+  const visibleRef = useRef(false);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -133,6 +139,9 @@ export default function StackSphere({ className }: { className?: string }) {
       return;
     }
 
+    // The loop only runs while the sphere is actually on screen — otherwise
+    // it'd burn a rAF callback every frame for the entire time the page is
+    // open, including whenever the visitor has scrolled well past it.
     let raf = 0;
     let last = performance.now();
 
@@ -143,8 +152,28 @@ export default function StackSphere({ className }: { className?: string }) {
       paint(angleRef.current);
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const nowVisible = entry.isIntersecting;
+        if (nowVisible === visibleRef.current) return;
+        visibleRef.current = nowVisible;
+
+        if (nowVisible) {
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        } else {
+          cancelAnimationFrame(raf);
+        }
+      },
+      { threshold: 0.01 },
+    );
+    if (sceneRef.current) io.observe(sceneRef.current);
+
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
   }, [points, reduced]);
 
   return (
