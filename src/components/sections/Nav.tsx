@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/ui/Button";
 import { navLinks, person } from "@/lib/data";
@@ -16,10 +16,22 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
+  // A nav-triggered jump reads as "scrolling down" too, which would hide the
+  // header the instant it's used to navigate — right when the visitor might
+  // want to click another link. Suppress auto-hide for the duration of that
+  // scroll (Lenis' scroll duration is 1.1s; 1.4s covers it with margin).
+  const suppressHideRef = useRef(false);
+  const handleNavigate = () => {
+    suppressHideRef.current = true;
+    window.setTimeout(() => {
+      suppressHideRef.current = false;
+    }, 1400);
+  };
+
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
     setScrolled(latest > 24);
-    if (open) return;
+    if (open || suppressHideRef.current) return;
     // Hide on scroll down past the hero, reveal on any upward scroll.
     setHidden(latest > previous && latest > 320);
   });
@@ -73,7 +85,7 @@ export default function Nav() {
             {/* Desktop links */}
             <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
               {navLinks.map((link) => (
-                <NavLink key={link.href} href={link.href}>
+                <NavLink key={link.href} href={link.href} onClick={handleNavigate}>
                   {link.label}
                 </NavLink>
               ))}
@@ -81,7 +93,7 @@ export default function Nav() {
 
             <div className="flex items-center gap-2">
               <div className="hidden sm:block">
-                <Button href="#contact" size="md" variant="solid">
+                <Button href="#contact" size="md" variant="solid" onClick={handleNavigate}>
                   Let&rsquo;s talk
                 </Button>
               </div>
@@ -137,7 +149,10 @@ export default function Nav() {
                 >
                   <Link
                     href={link.href}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      handleNavigate();
+                    }}
                     className="block border-b border-paper/10 py-4 text-[2.25rem] font-medium leading-none tracking-tight"
                   >
                     <span className="mr-3 align-super font-mono text-xs text-lime">
@@ -172,10 +187,19 @@ export default function Nav() {
   );
 }
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function NavLink({
+  href,
+  children,
+  onClick,
+}: {
+  href: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       data-cursor="hover"
       className="group relative overflow-hidden rounded-full px-4 py-2 text-sm text-ink/70 transition-colors hover:text-ink"
     >

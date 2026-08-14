@@ -140,6 +140,13 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* Keeps anchor-linked sections clear of the fixed pill nav (~86px tall)
+     when a hash jump or scrollIntoView lands on them — otherwise the
+     section's own heading ends up hidden behind the header. */
+  section[id] {
+    scroll-margin-top: 6.5rem;
+  }
+
   body {
     background-color: var(--color-paper);
     color: var(--color-ink);
