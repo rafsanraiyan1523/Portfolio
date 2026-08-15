@@ -6,6 +6,7 @@ import SmoothScroll from "@/components/providers/SmoothScroll";
 import Cursor from "@/components/ui/Cursor";
 import Preloader from "@/components/ui/Preloader";
 import ScrollProgress from "@/components/ui/ScrollProgress";
+import ViewportFrame from "@/components/ui/ViewportFrame";
 import { person, summary } from "@/lib/data";
 
 const geistSans = Geist({
@@ -134,6 +135,7 @@ export default function RootLayout({
         <Preloader />
         <Cursor />
         <ScrollProgress />
+        <ViewportFrame />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
