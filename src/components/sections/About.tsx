@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import AmbientOrbs from "@/components/ui/AmbientOrbs";
+import GoldenSpiral from "@/components/ui/GoldenSpiral";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import {
@@ -16,8 +17,9 @@ import {
 /** Bio, education, research and credentials — the CV's back half. */
 export default function About() {
   return (
-    <section id="about" className="grain relative bg-paper py-24 md:py-36">
+    <section id="about" className="section-y grain relative overflow-hidden bg-paper">
       <AmbientOrbs />
+      <GoldenSpiral className="pointer-events-none absolute -right-24 top-1/2 -z-10 hidden h-[38rem] w-[38rem] -translate-y-1/2 text-ink/[0.06] lg:block" />
       <div className="container-x">
         <SectionHeading
           eyebrow="About"
@@ -28,9 +30,9 @@ export default function About() {
           ]}
         />
 
-        <div className="mt-16 grid gap-16 md:mt-24 lg:grid-cols-12 lg:gap-12">
+        <div className="mt-flow grid gap-16 lg:grid-cols-[1fr_1.618fr] lg:gap-16">
           {/* ---------------- Bio ---------------- */}
-          <div className="lg:col-span-5">
+          <div>
             <Reveal>
               <p className="text-lg leading-relaxed tracking-tight md:text-xl">
                 {summaryLong}
@@ -63,7 +65,7 @@ export default function About() {
           </div>
 
           {/* ---------------- Education & credentials ---------------- */}
-          <div className="lg:col-span-6 lg:col-start-7">
+          <div>
             {/* Research & certification */}
             <Reveal>
               <h3 className="eyebrow text-muted">Research &amp; certification</h3>

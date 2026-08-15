@@ -12,10 +12,10 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 /** Full technical inventory, grouped. Each chip pops in on its own beat. */
 export default function Skills() {
   return (
-    <section id="skills" className="grain relative bg-paper-2 py-24 md:py-36">
+    <section id="skills" className="section-y grain relative bg-paper-2">
       <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
+          <div>
             <SectionHeading
               eyebrow="Toolkit"
               segments={[
@@ -25,7 +25,7 @@ export default function Skills() {
               ]}
             />
           </div>
-          <Reveal delay={0.15} className="lg:col-span-4 lg:pt-20">
+          <Reveal delay={0.15} className="lg:pt-20">
             <p className="text-base leading-relaxed text-muted md:text-lg">
               Everything below is something I&rsquo;ve shipped with in
               production — not a list of things I&rsquo;ve read about.

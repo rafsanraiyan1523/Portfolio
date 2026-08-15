@@ -18,11 +18,11 @@ export default function Experience() {
   return (
     <section
       id="experience"
-      className="on-dark relative overflow-hidden bg-ink py-24 text-paper md:py-36"
+      className="section-y on-dark relative overflow-hidden bg-ink text-paper"
     >
       <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
+          <div>
             <SectionHeading
               dark
               eyebrow="Experience"
@@ -34,7 +34,7 @@ export default function Experience() {
               ]}
             />
           </div>
-          <Reveal delay={0.15} className="lg:col-span-4 lg:pt-20">
+          <Reveal delay={0.15} className="lg:pt-20">
             <p className="text-base leading-relaxed text-paper/55 md:text-lg">
               Intern to department head in under three years — engineering,
               analytics and now owning a live commerce P&amp;L.

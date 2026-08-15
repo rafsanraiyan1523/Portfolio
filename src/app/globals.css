@@ -30,6 +30,26 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
 
+  /* Golden ratio (φ) — drives the type scale and section rhythm below.
+     Every tier is calc()'d from its neighbour so the ratio stays literal
+     and a single edit to --ratio-golden re-tunes the whole system. */
+  --ratio-golden: 1.618;
+
+  /* display-lg is the workhorse (every section headline) — kept as the
+     fixed anchor so the site's most visible size never has to be guessed
+     back into place. Everything else is derived from it. */
+  --display-lg-max: 5.5rem;
+  --display-md-max: calc(var(--display-lg-max) / var(--ratio-golden));
+  --display-sm-max: calc(var(--display-md-max) / var(--ratio-golden));
+  --display-xl-max: calc(var(--display-lg-max) * var(--ratio-golden));
+
+  /* Section vertical rhythm: mobile padding × φ = desktop padding. */
+  --space-section: 6rem;
+  --space-section-lg: calc(var(--space-section) * var(--ratio-golden));
+  /* Gap beneath a section's heading row, same golden pair. */
+  --space-flow: 4rem;
+  --space-flow-lg: calc(var(--space-flow) * var(--ratio-golden));
+
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
@@ -221,30 +241,60 @@ html.lenis body {
   }
 }
 
-/* Fluid display type — the headline scale used across the site. */
+/* Golden-ratio vertical rhythm for full sections: mobile padding × φ = desktop. */
+@utility section-y {
+  padding-block: var(--space-section);
+
+  @media (width >= 48rem) {
+    padding-block: var(--space-section-lg);
+  }
+}
+
+/* Same rhythm, top edge only — for sections that own their own bottom spacing
+   (a marquee, a stacking deck) instead of a flat padding-bottom. */
+@utility section-t {
+  padding-top: var(--space-section);
+
+  @media (width >= 48rem) {
+    padding-top: var(--space-section-lg);
+  }
+}
+
+/* Gap beneath a section's heading row before its main content starts. */
+@utility mt-flow {
+  margin-top: var(--space-flow);
+
+  @media (width >= 48rem) {
+    margin-top: var(--space-flow-lg);
+  }
+}
+
+/* Fluid display type — the headline scale used across the site.
+   Each tier's max is exactly φ apart from its neighbour (see --display-*-max
+   above), so display-lg / display-md === φ === display-md / display-sm. */
 @utility display-xl {
-  font-size: clamp(2.5rem, 5.9vw, 5.75rem);
+  font-size: clamp(3rem, 9.1vw, var(--display-xl-max));
   line-height: 0.95;
   letter-spacing: -0.042em;
   font-weight: 500;
 }
 
 @utility display-lg {
-  font-size: clamp(2.25rem, 6.2vw, 5.5rem);
+  font-size: clamp(2.25rem, 6.2vw, var(--display-lg-max));
   line-height: 0.96;
   letter-spacing: -0.04em;
   font-weight: 500;
 }
 
 @utility display-md {
-  font-size: clamp(1.75rem, 3.6vw, 3.25rem);
+  font-size: clamp(1.75rem, 3.8vw, var(--display-md-max));
   line-height: 1.04;
   letter-spacing: -0.032em;
   font-weight: 500;
 }
 
 @utility display-sm {
-  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  font-size: clamp(1.375rem, 2.5vw, var(--display-sm-max));
   line-height: 1.12;
   letter-spacing: -0.022em;
   font-weight: 500;

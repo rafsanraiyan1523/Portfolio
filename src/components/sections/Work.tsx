@@ -35,10 +35,10 @@ export default function Work() {
   });
 
   return (
-    <section id="work" className="grain relative bg-paper-2 pt-24 md:pt-36">
+    <section id="work" className="section-t grain relative bg-paper-2">
       <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
+          <div>
             <SectionHeading
               eyebrow="Selected work"
               segments={[
@@ -48,7 +48,7 @@ export default function Work() {
               ]}
             />
           </div>
-          <Reveal delay={0.15} className="lg:col-span-4 lg:pt-20">
+          <Reveal delay={0.15} className="lg:pt-20">
             <p className="text-base leading-relaxed text-muted md:text-lg">
               From a live production storefront to hand-rolled Laravel systems.
               Each one shipped end to end — schema, interface, deployment.
@@ -57,7 +57,7 @@ export default function Work() {
         </div>
       </div>
 
-      <div ref={containerRef} className="relative mt-16 md:mt-24">
+      <div ref={containerRef} className="relative mt-flow">
         {projects.map((project, i) => (
           <StackCard
             key={project.id}

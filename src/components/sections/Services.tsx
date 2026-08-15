@@ -19,7 +19,7 @@ export default function Services() {
   const [active, setActive] = useState<number | null>(0);
 
   return (
-    <section id="services" className="grain relative bg-paper py-24 md:py-36">
+    <section id="services" className="section-y grain relative bg-paper">
       <AmbientOrbs
         orbs={[
           {
@@ -33,8 +33,8 @@ export default function Services() {
         ]}
       />
       <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
+          <div>
             <SectionHeading
               eyebrow="What I do"
               segments={[
@@ -44,7 +44,7 @@ export default function Services() {
               ]}
             />
           </div>
-          <Reveal delay={0.15} className="lg:col-span-4 lg:pt-20">
+          <Reveal delay={0.15} className="lg:pt-20">
             <p className="text-base leading-relaxed text-muted md:text-lg">
               Most teams hand these off between four people. I run them as one
               loop — which is why the numbers move faster.

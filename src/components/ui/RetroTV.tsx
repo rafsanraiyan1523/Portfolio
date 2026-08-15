@@ -41,7 +41,7 @@ export default function RetroTV({ image, video, alt, className, priority }: Prop
   const timecode = useRecTimecode();
 
   return (
-    <div className={cn("relative aspect-[3/2] w-full max-w-[26rem]", className)}>
+    <div className={cn("relative aspect-[1.618/1] w-full max-w-[26rem]", className)}>
       {/* Case */}
       <div
         aria-hidden
@@ -68,7 +68,7 @@ export default function RetroTV({ image, video, alt, className, priority }: Prop
 
       <div className="absolute inset-0 flex items-stretch gap-2.5 p-3 sm:gap-3 sm:p-4">
         {/* ---------------- Screen ---------------- */}
-        <div className="relative flex-[0.72]">
+        <div className="relative flex-[0.618]">
           <div className="absolute inset-0 rounded-[1.25rem] bg-[#161009] shadow-[inset_0_2px_6px_rgba(0,0,0,0.6)]" />
           <div className="absolute inset-[9px] overflow-hidden rounded-[0.85rem] bg-black sm:inset-[11px]">
             {/* Slow continuous drift — a still photo alone reads as a photo; a frame that's always
@@ -173,7 +173,7 @@ export default function RetroTV({ image, video, alt, className, priority }: Prop
         </div>
 
         {/* ---------------- Controls ---------------- */}
-        <div className="flex flex-[0.28] flex-col items-center justify-between gap-2 py-1">
+        <div className="flex flex-[0.382] flex-col items-center justify-between gap-2 py-1">
           {/* Speaker grille */}
           <div className="flex h-full w-full gap-[3px] rounded-md bg-black/25 p-1.5 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)] sm:gap-1">
             {Array.from({ length: 5 }).map((_, i) => (

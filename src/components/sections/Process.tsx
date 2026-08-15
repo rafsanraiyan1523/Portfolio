@@ -22,7 +22,7 @@ export default function Process() {
   });
 
   return (
-    <section id="process" className="grain relative bg-paper py-24 md:py-36">
+    <section id="process" className="section-y grain relative bg-paper">
       <AmbientOrbs
         orbs={[
           {
@@ -37,8 +37,8 @@ export default function Process() {
         ]}
       />
       <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
+          <div>
             <SectionHeading
               eyebrow="Process"
               segments={[
@@ -47,7 +47,7 @@ export default function Process() {
               ]}
             />
           </div>
-          <Reveal delay={0.15} className="lg:col-span-4 lg:pt-20">
+          <Reveal delay={0.15} className="lg:pt-20">
             <p className="text-base leading-relaxed text-muted md:text-lg">
               Four stages that feed each other. Optimise sends findings straight
               back into discover — which is where compounding growth comes from.
@@ -55,7 +55,7 @@ export default function Process() {
           </Reveal>
         </div>
 
-        <div ref={ref} className="relative mt-16 md:mt-24">
+        <div ref={ref} className="relative mt-flow">
           {/* Track + progress line */}
           <div
             aria-hidden

@@ -14,10 +14,10 @@ export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="grain relative bg-paper py-24 md:py-36">
+    <section id="faq" className="section-y grain relative bg-paper">
       <div className="container-x">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-5">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.618fr] lg:gap-16">
+          <div>
             <div className="lg:sticky lg:top-32">
               <SectionHeading
                 eyebrow="FAQ"
@@ -37,7 +37,7 @@ export default function Faq() {
             </div>
           </div>
 
-          <div className="lg:col-span-7">
+          <div>
             <div className="border-t border-ink/12">
               {faqs.map((faq, i) => {
                 const isOpen = open === i;

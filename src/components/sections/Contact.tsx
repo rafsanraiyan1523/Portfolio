@@ -104,7 +104,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="on-dark relative overflow-hidden bg-ink pt-24 text-paper md:pt-36"
+      className="section-t on-dark relative overflow-hidden bg-ink text-paper"
     >
       {/* Ambient wash */}
       <div
@@ -117,9 +117,9 @@ export default function Contact() {
       />
 
       <div className="container-x relative z-10">
-        <div className="grid gap-16 lg:grid-cols-12 lg:gap-12">
+        <div className="grid gap-16 lg:grid-cols-[1fr_1.618fr] lg:gap-16">
           {/* ---------------- Pitch ---------------- */}
-          <div className="lg:col-span-5">
+          <div>
             <div className="mb-8 flex items-center gap-4">
               <span className="size-1.5 rounded-full bg-lime" />
               <span className="eyebrow text-paper/55">Contact</span>
@@ -208,7 +208,7 @@ export default function Contact() {
           </div>
 
           {/* ---------------- Form ---------------- */}
-          <div className="lg:col-span-6 lg:col-start-7">
+          <div>
             <Reveal delay={0.1}>
               <div className="relative rounded-3xl border border-paper/15 bg-paper/[0.04] p-6 backdrop-blur-sm md:p-9">
                 <AnimatePresence mode="wait">

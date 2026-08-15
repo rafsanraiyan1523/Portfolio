@@ -26,7 +26,7 @@ export default function Impact() {
     <section
       ref={ref}
       id="impact"
-      className="on-dark relative overflow-hidden bg-ink py-24 text-paper md:py-36"
+      className="section-y on-dark relative overflow-hidden bg-ink text-paper"
     >
       {/* Drifting radial wash */}
       <motion.div
@@ -44,8 +44,8 @@ export default function Impact() {
       </motion.div>
 
       <div className="container-x relative z-10">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
+        <div className="grid gap-12 lg:grid-cols-[1.618fr_1fr] lg:gap-16">
+          <div>
             <SectionHeading
               dark
               eyebrow="Measured impact"
@@ -59,7 +59,7 @@ export default function Impact() {
             />
           </div>
 
-          <Reveal delay={0.15} className="lg:col-span-5 lg:pt-24">
+          <Reveal delay={0.15} className="lg:pt-24">
             <p className="text-base leading-relaxed text-paper/60 md:text-lg">
               {summaryLong}
             </p>
