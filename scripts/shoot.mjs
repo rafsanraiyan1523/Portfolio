@@ -51,24 +51,6 @@ for (const [name, viewport] of [
     await page.screenshot({ path: `${out}/${name}-${id}.png` });
   }
 
-  // Sample the work stack at several scroll depths to check card layering
-  const box = await page.evaluate(() => {
-    const el = document.querySelector("#work");
-    if (!el) return null;
-    const r = el.getBoundingClientRect();
-    return { top: r.top + window.scrollY, height: r.height };
-  });
-  if (box) {
-    for (const frac of [0.15, 0.35, 0.55, 0.75, 0.95]) {
-      await page.evaluate(
-        (y) => window.scrollTo({ top: y, behavior: "instant" }),
-        box.top + box.height * frac,
-      );
-      await page.waitForTimeout(900);
-      await page.screenshot({ path: `${out}/${name}-stack-${frac}.png` });
-    }
-  }
-
   // Full-page height sanity check + horizontal overflow detection
   const metrics = await page.evaluate(() => ({
     scrollHeight: document.documentElement.scrollHeight,

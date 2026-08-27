@@ -129,12 +129,11 @@ export type Project = {
   stack: readonly string[];
   results: readonly { value: string; label: string }[];
   accent: string;
-  ink: string;
   links?: readonly { label: string; href: string }[];
-  /** Real product screenshot — falls back to the abstract ProjectVisual mockup when absent. */
-  image?: string;
-  /** The image's actual pixel size, so it renders at its own aspect ratio — never cropped. */
-  imageSize?: readonly [width: number, height: number];
+  /** Cover image for the project carousel. */
+  image: string;
+  /** The image's actual pixel size (only used where an unclipped view still matters). */
+  imageSize: readonly [width: number, height: number];
 };
 
 export const projects: readonly Project[] = [
@@ -152,7 +151,6 @@ export const projects: readonly Project[] = [
       { value: "Live", label: "Extraction history" },
     ],
     accent: "#E8C547",
-    ink: "#0d0d0f",
     links: [
       { label: "Source", href: "https://github.com/rafsanraiyan1523/brand-extractor" },
     ],
@@ -173,7 +171,6 @@ export const projects: readonly Project[] = [
       { value: "Full", label: "Draft-to-grading flow" },
     ],
     accent: "#6366F1",
-    ink: "#ffffff",
     links: [
       { label: "Source", href: "https://github.com/rafsanraiyan1523/Assignment-Hub" },
     ],
@@ -194,7 +191,6 @@ export const projects: readonly Project[] = [
       { value: "100%", label: "Mobile-first" },
     ],
     accent: "#FF6B4A",
-    ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/deshi_bideshi" }],
     image: "/projects/deshi-bideshi.png",
     imageSize: [1407, 745],
@@ -213,10 +209,29 @@ export const projects: readonly Project[] = [
       { value: "1", label: "Investment estimator" },
     ],
     accent: "#7C6BFF",
-    ink: "#ffffff",
     links: [{ label: "Live site", href: "https://r3-studio.vercel.app/" }],
     image: "/projects/r3-studio.png",
     imageSize: [767, 856],
+  },
+  {
+    id: "leadradar",
+    name: "LeadRadar",
+    category: "AI-powered lead discovery platform",
+    tagline: "Search a market. Get a ranked, audited pipeline.",
+    description:
+      "An AI-powered lead generation platform that discovers businesses, analyzes their online presence, and identifies growth opportunities — from a business-type search straight through to a scored, ready-to-work pipeline.",
+    stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma"],
+    results: [
+      { value: "AI", label: "Opportunity scoring" },
+      { value: "Live", label: "Website & Google audits" },
+      { value: "Full", label: "Search-to-pipeline flow" },
+    ],
+    accent: "#4F5BF5",
+    links: [
+      { label: "Source", href: "https://github.com/rafsanraiyan1523/LeadRadar" },
+    ],
+    image: "/projects/leadradar.png",
+    imageSize: [3800, 1800],
   },
   {
     id: "e-lectronix",
@@ -232,8 +247,9 @@ export const projects: readonly Project[] = [
       { value: "Full", label: "Admin dashboard" },
     ],
     accent: "#2ED3B7",
-    ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/E-Lectronix" }],
+    image: "/projects/e-lectronix.png",
+    imageSize: [1200, 1200],
   },
   {
     id: "post-office",
@@ -249,8 +265,9 @@ export const projects: readonly Project[] = [
       { value: "Visual", label: "Transaction reports" },
     ],
     accent: "#4A9BFF",
-    ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan23/PostOffice" }],
+    image: "/projects/post-office.png",
+    imageSize: [1200, 1200],
   },
 ];
 
