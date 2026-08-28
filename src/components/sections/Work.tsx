@@ -55,14 +55,14 @@ export default function Work() {
           }))}
           activeIndex={active}
           onActiveChange={setActive}
-          cardWidth="clamp(180px, 30vw, 420px)"
+          cardWidth="clamp(240px, 42vw, 640px)"
           showNavigation
           showPagination
           label="Selected work"
         />
 
         <div className="container-x">
-          <div className="mx-auto mt-10 max-w-3xl md:mt-14">
+          <div className="mx-auto mt-10 max-w-4xl md:mt-14">
             <AnimatePresence mode="wait">
               <motion.div
                 key={project.id}
