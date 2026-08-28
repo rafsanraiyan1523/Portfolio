@@ -55,14 +55,15 @@ export default function Work() {
           }))}
           activeIndex={active}
           onActiveChange={setActive}
-          cardWidth="clamp(240px, 42vw, 640px)"
+          cardWidth="clamp(200px, 30vw, 400px)"
+          focusScale={1.08}
           showNavigation
           showPagination
           label="Selected work"
         />
 
         <div className="container-x">
-          <div className="mx-auto mt-10 max-w-4xl md:mt-14">
+          <div className="mx-auto mt-2 max-w-4xl md:mt-3">
             <AnimatePresence mode="wait">
               <motion.div
                 key={project.id}
@@ -83,15 +84,15 @@ export default function Work() {
                   </span>
                 </div>
 
-                <h3 className="display-md mt-6">{project.name}</h3>
-                <p className="mt-3 text-lg tracking-tight text-ink/70 md:text-xl">
+                <h3 className="display-md mt-2">{project.name}</h3>
+                <p className="mt-1 text-lg tracking-tight text-ink/70 md:text-xl">
                   {project.tagline}
                 </p>
-                <p className="mt-5 max-w-lg text-sm leading-relaxed text-muted md:text-base">
+                <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-muted md:text-base">
                   {project.description}
                 </p>
 
-                <dl className="mt-8 grid grid-cols-3 gap-4 border-t border-ink/12 pt-6">
+                <dl className="mt-5 grid grid-cols-3 gap-4 border-t border-ink/12 pt-4">
                   {project.results.map((result) => (
                     <div key={result.label}>
                       <dt className="sr-only">{result.label}</dt>
@@ -107,7 +108,7 @@ export default function Work() {
                   ))}
                 </dl>
 
-                <div className="mt-7 flex flex-wrap items-center gap-2">
+                <div className="mt-5 flex flex-wrap items-center gap-2">
                   {project.stack.map((tech) => (
                     <span
                       key={tech}
@@ -119,7 +120,7 @@ export default function Work() {
                 </div>
 
                 {project.links?.length ? (
-                  <div className="mt-7 flex flex-wrap gap-5">
+                  <div className="mt-5 flex flex-wrap gap-5">
                     {project.links.map((link) => (
                       <Link
                         key={link.href}
