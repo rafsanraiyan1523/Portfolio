@@ -41,7 +41,7 @@ The exported groups map one-to-one onto the page:
 | --- | --- |
 | `person`, `summary`, `heroStats` | Hero, nav, footer, JSON-LD |
 | `metrics`, `summaryLong` | Impact band |
-| `projects` | Selected work (coverflow carousel) |
+| `projects` | Selected work (stacking cards) |
 | `services` | What I do |
 | `process` | Process |
 | `experience` | Experience timeline |
@@ -53,10 +53,9 @@ Replace the portrait at `public/rafsan.jpg` (4:5 crop works best).
 
 ### Project visuals
 
-Every entry in `projects` needs a real `image` (plus its natural `imageSize`) — the coverflow carousel
-in [`src/components/sections/Work.tsx`](src/components/sections/Work.tsx) renders each one as a square,
-`object-cover object-top` cropped card, so a real screenshot (or a hand-built stand-in the same shape as
-the others in `public/projects/`) is required, not optional.
+Every entry in `projects` carries a real `image` and its natural `imageSize` —
+[`ProjectScreenshot`](src/components/ui/ProjectScreenshot.tsx) renders each one at its own aspect ratio,
+uncropped, inside the stacking card in [`src/components/sections/Work.tsx`](src/components/sections/Work.tsx).
 
 ## Contact form
 
@@ -90,7 +89,7 @@ To rebrand, change the `--color-*` values. Nothing else needs touching.
 | Seamless CSS marquees | `ui/Marquee.tsx` |
 | Count-up metrics | `ui/Counter.tsx` |
 | Blend-mode custom cursor | `ui/Cursor.tsx` — opt in with `data-cursor="hover"` or `data-cursor="label"` |
-| Coverflow project carousel, description synced to the centred slide | `sections/Work.tsx`, `ui/coverflow-carousel.tsx` |
+| Sticky stacking project deck | `sections/Work.tsx` |
 | Scroll-drawn process line | `sections/Process.tsx` |
 | Direction-aware hiding nav | `sections/Nav.tsx` |
 
@@ -98,13 +97,12 @@ To rebrand, change the `--color-*` values. Nothing else needs touching.
 the custom cursor, freezes marquees, and renders every reveal as static content — the page stays fully usable.
 
 > Scroll-linked `useTransform` input ranges must stay within `[0,1]`. Motion compiles them to native
-> scroll-timeline offsets, and out-of-range values throw at runtime — clamp any derived range before
-> passing it in (see `Hero.tsx`'s parallax transforms for a range that's already kept in bounds).
+> scroll-timeline offsets, and out-of-range values throw at runtime. `Work.tsx` clamps for this reason.
 
 ## Visual checks
 
-`scripts/shoot.mjs` screenshots every section at desktop and mobile, and fails loudly on console errors
-or horizontal overflow.
+`scripts/shoot.mjs` screenshots every section at desktop and mobile, samples the stacking deck at five
+scroll depths, and fails loudly on console errors or horizontal overflow.
 
 ```bash
 npm run dev

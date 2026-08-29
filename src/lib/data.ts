@@ -129,10 +129,12 @@ export type Project = {
   stack: readonly string[];
   results: readonly { value: string; label: string }[];
   accent: string;
+  /** Card text/background scheme: "#ffffff" renders the card dark (on-dark), anything else light. */
+  ink: string;
   links?: readonly { label: string; href: string }[];
-  /** Cover image for the project carousel. */
+  /** Real product screenshot, rendered at its own natural aspect ratio. */
   image: string;
-  /** The image's actual pixel size (only used where an unclipped view still matters). */
+  /** The image's actual pixel size, so it renders uncropped whatever its shape. */
   imageSize: readonly [width: number, height: number];
 };
 
@@ -151,6 +153,7 @@ export const projects: readonly Project[] = [
       { value: "Live", label: "Extraction history" },
     ],
     accent: "#E8C547",
+    ink: "#0d0d0f",
     links: [
       { label: "Source", href: "https://github.com/rafsanraiyan1523/brand-extractor" },
     ],
@@ -171,6 +174,7 @@ export const projects: readonly Project[] = [
       { value: "Full", label: "Draft-to-grading flow" },
     ],
     accent: "#6366F1",
+    ink: "#ffffff",
     links: [
       { label: "Source", href: "https://github.com/rafsanraiyan1523/Assignment-Hub" },
     ],
@@ -191,6 +195,7 @@ export const projects: readonly Project[] = [
       { value: "100%", label: "Mobile-first" },
     ],
     accent: "#FF6B4A",
+    ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/deshi_bideshi" }],
     image: "/projects/deshi-bideshi.png",
     imageSize: [1407, 745],
@@ -209,6 +214,7 @@ export const projects: readonly Project[] = [
       { value: "1", label: "Investment estimator" },
     ],
     accent: "#7C6BFF",
+    ink: "#ffffff",
     links: [{ label: "Live site", href: "https://r3-studio.vercel.app/" }],
     image: "/projects/r3-studio.png",
     imageSize: [767, 856],
@@ -227,6 +233,7 @@ export const projects: readonly Project[] = [
       { value: "Full", label: "Search-to-pipeline flow" },
     ],
     accent: "#4F5BF5",
+    ink: "#ffffff",
     links: [
       { label: "Source", href: "https://github.com/rafsanraiyan1523/LeadRadar" },
     ],
@@ -247,6 +254,7 @@ export const projects: readonly Project[] = [
       { value: "Full", label: "Admin dashboard" },
     ],
     accent: "#2ED3B7",
+    ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/E-Lectronix" }],
     image: "/projects/e-lectronix.png",
     imageSize: [1200, 1200],
@@ -265,6 +273,7 @@ export const projects: readonly Project[] = [
       { value: "Visual", label: "Transaction reports" },
     ],
     accent: "#4A9BFF",
+    ink: "#0d0d0f",
     links: [{ label: "Source", href: "https://github.com/rafsanraiyan23/PostOffice" }],
     image: "/projects/post-office.png",
     imageSize: [1200, 1200],
