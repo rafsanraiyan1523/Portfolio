@@ -41,7 +41,7 @@ export default function Work() {
             <SectionHeading
               eyebrow="Selected work"
               segments={[
-                { text: "Seven builds," },
+                { text: "Eight builds," },
                 { text: "shipped", className: "accent-serif" },
                 { text: "and measured." },
               ]}

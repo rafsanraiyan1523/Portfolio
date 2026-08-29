@@ -140,6 +140,49 @@ export type Project = {
 
 export const projects: readonly Project[] = [
   {
+    id: "leadradar",
+    name: "LeadRadar",
+    category: "AI-powered lead discovery platform",
+    tagline: "Search a market. Get a ranked, audited pipeline.",
+    description:
+      "An AI-powered lead generation platform that discovers businesses, analyzes their online presence, and identifies growth opportunities — from a business-type search straight through to a scored, ready-to-work pipeline.",
+    stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma"],
+    results: [
+      { value: "AI", label: "Opportunity scoring" },
+      { value: "Live", label: "Website & Google audits" },
+      { value: "Full", label: "Search-to-pipeline flow" },
+    ],
+    accent: "#4F5BF5",
+    ink: "#ffffff",
+    links: [
+      { label: "Source", href: "https://github.com/rafsanraiyan1523/LeadRadar" },
+    ],
+    image: "/projects/leadradar.png",
+    imageSize: [3800, 1800],
+  },
+  {
+    id: "carvia",
+    name: "Carvia",
+    category: "AI-powered car rental platform",
+    tagline: "Describe a trip in plain language. Get real, available cars back.",
+    description:
+      "A full-stack car rental platform with a customer booking site, an admin dashboard, an AI vehicle-recommendation assistant, and a real booking-confirmation automation pipeline — built on a production TypeScript monorepo backed by PostgreSQL.",
+    stack: ["React", "TypeScript", "Express", "PostgreSQL"],
+    results: [
+      { value: "AI", label: "Trip-to-vehicle matching" },
+      { value: "56", label: "Backend tests, real DB" },
+      { value: "Auto", label: "Booking confirmation" },
+    ],
+    accent: "#F97316",
+    ink: "#ffffff",
+    links: [
+      { label: "Live site", href: "https://carvia-omega.vercel.app" },
+      { label: "Source", href: "https://github.com/rafsanraiyan1523/carvia" },
+    ],
+    image: "/projects/carvia.png",
+    imageSize: [1440, 830],
+  },
+  {
     id: "brand-extractor",
     name: "Brand Extractor",
     category: "Client-side brand analysis tool",
@@ -218,27 +261,6 @@ export const projects: readonly Project[] = [
     links: [{ label: "Live site", href: "https://r3-studio.vercel.app/" }],
     image: "/projects/r3-studio.png",
     imageSize: [767, 856],
-  },
-  {
-    id: "leadradar",
-    name: "LeadRadar",
-    category: "AI-powered lead discovery platform",
-    tagline: "Search a market. Get a ranked, audited pipeline.",
-    description:
-      "An AI-powered lead generation platform that discovers businesses, analyzes their online presence, and identifies growth opportunities — from a business-type search straight through to a scored, ready-to-work pipeline.",
-    stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma"],
-    results: [
-      { value: "AI", label: "Opportunity scoring" },
-      { value: "Live", label: "Website & Google audits" },
-      { value: "Full", label: "Search-to-pipeline flow" },
-    ],
-    accent: "#4F5BF5",
-    ink: "#ffffff",
-    links: [
-      { label: "Source", href: "https://github.com/rafsanraiyan1523/LeadRadar" },
-    ],
-    image: "/projects/leadradar.png",
-    imageSize: [3800, 1800],
   },
   {
     id: "e-lectronix",
