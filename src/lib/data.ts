@@ -370,6 +370,7 @@ export const process = [
     blurb:
       "I start with the data — analytics, Search Console, Core Web Vitals and the funnel — to find where the revenue is actually leaking.",
     deliverables: ["Technical audit", "Funnel analysis", "Priority backlog"],
+    accent: "#FF6B4A",
   },
   {
     step: "02",
@@ -377,6 +378,7 @@ export const process = [
     blurb:
       "Schema, routes, components and integrations planned before a line of production code — so the build stays fast and the codebase stays sane.",
     deliverables: ["Data model", "Component plan", "Integration map"],
+    accent: "#7C6BFF",
   },
   {
     step: "03",
@@ -384,6 +386,7 @@ export const process = [
     blurb:
       "Typed, responsive, accessible front-ends on top of well-tested APIs. Deployed with CI, CDN and monitoring from day one.",
     deliverables: ["Production codebase", "CMS integration", "Deploy pipeline"],
+    accent: "#2ED3B7",
   },
   {
     step: "04",
@@ -391,6 +394,7 @@ export const process = [
     blurb:
       "Launch is the start. Technical SEO, CRO experiments and performance work compound the result month over month.",
     deliverables: ["CRO experiments", "SEO roadmap", "Performance report"],
+    accent: "#E8C547",
   },
 ] as const;
 
