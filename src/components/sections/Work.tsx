@@ -112,7 +112,9 @@ function StackCard({
       <motion.article
         style={{
           background: baseBackground,
-          ...(reduced ? {} : { scale, transformOrigin: "top center" }),
+          ...(reduced
+            ? {}
+            : { scale, transformOrigin: "top center", willChange: "transform" }),
         }}
         className="relative w-full max-w-[84rem] overflow-hidden rounded-[1.5rem] border border-ink/10 shadow-[0_30px_90px_-40px_rgba(12,12,14,0.45)] md:rounded-[2rem]"
       >
@@ -256,7 +258,7 @@ function StackCard({
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.9, ease: EASE }}
             className="order-1 lg:order-2"
           >
@@ -264,6 +266,7 @@ function StackCard({
               src={project.image}
               size={project.imageSize}
               alt={`${project.name} interface`}
+              priority={index < 2}
             />
           </motion.div>
         </div>

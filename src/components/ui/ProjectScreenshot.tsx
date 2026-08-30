@@ -15,11 +15,15 @@ export default function ProjectScreenshot({
   alt,
   size,
   className,
+  priority,
 }: {
   src: string;
   alt: string;
   size: readonly [width: number, height: number];
   className?: string;
+  /** Skips lazy-loading — for the first card or two, which a fast scroll
+   * through the stacking deck can reach before a lazy fetch would resolve. */
+  priority?: boolean;
 }) {
   const [width, height] = size;
 
@@ -36,6 +40,7 @@ export default function ProjectScreenshot({
         width={width}
         height={height}
         sizes="(max-width: 1024px) 100vw, 40vw"
+        priority={priority}
         className="h-auto w-full"
       />
     </div>
