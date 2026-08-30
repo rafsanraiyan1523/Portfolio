@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { DotPattern } from "@/components/ui/dot-pattern";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { experience } from "@/lib/data";
@@ -20,6 +21,7 @@ export default function Experience() {
       id="experience"
       className="section-y on-dark relative overflow-hidden bg-ink text-paper"
     >
+      <DotPattern className="-z-10 fill-paper/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
           <div>

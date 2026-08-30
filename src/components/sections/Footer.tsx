@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
+import { DotPattern } from "@/components/ui/dot-pattern";
 import Reveal from "@/components/ui/Reveal";
 import { navLinks, person } from "@/lib/data";
 
 export default function Footer() {
   return (
-    <footer className="on-dark relative bg-ink pb-10 pt-16 text-paper md:pb-12 md:pt-20">
+    <footer className="on-dark relative overflow-hidden bg-ink pb-10 pt-16 text-paper md:pb-12 md:pt-20">
+      <DotPattern className="-z-10 fill-paper/[0.12] [mask-image:radial-gradient(ellipse_at_center,white,transparent_85%)]" />
       <div className="container-x">
         <div className="grid gap-12 border-t border-paper/12 pt-12 md:pt-16 lg:grid-cols-12">
           {/* Identity */}

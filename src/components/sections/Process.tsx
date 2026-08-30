@@ -11,6 +11,7 @@ import {
 import { useRef } from "react";
 
 import AmbientOrbs from "@/components/ui/AmbientOrbs";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { process } from "@/lib/data";
 
@@ -42,6 +43,7 @@ export default function Process() {
       id="process"
       className="grain relative bg-paper pb-[var(--space-section)] pt-16 md:pb-[var(--space-section-lg)] md:pt-20"
     >
+      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <AmbientOrbs
         orbs={[
           {

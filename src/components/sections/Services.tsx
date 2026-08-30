@@ -1,4 +1,5 @@
 import AmbientOrbs from "@/components/ui/AmbientOrbs";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { services } from "@/lib/data";
@@ -11,6 +12,7 @@ import { services } from "@/lib/data";
 export default function Services() {
   return (
     <section id="services" className="section-y grain relative bg-paper">
+      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <AmbientOrbs
         orbs={[
           {

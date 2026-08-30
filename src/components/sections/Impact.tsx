@@ -4,6 +4,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { useRef } from "react";
 
 import Counter from "@/components/ui/Counter";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { metrics, summaryLong } from "@/lib/data";
@@ -28,6 +29,8 @@ export default function Impact() {
       id="impact"
       className="section-y on-dark relative overflow-hidden bg-ink text-paper"
     >
+      <DotPattern className="-z-10 fill-paper/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
+
       {/* Drifting radial wash */}
       <motion.div
         aria-hidden

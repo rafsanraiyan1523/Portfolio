@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
+import { DotPattern } from "@/components/ui/dot-pattern";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { faqs } from "@/lib/data";
@@ -15,6 +16,7 @@ export default function Faq() {
 
   return (
     <section id="faq" className="section-y grain relative bg-paper">
+      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <div className="container-x">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.618fr] lg:gap-16">
           <div>

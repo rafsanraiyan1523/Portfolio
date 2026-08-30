@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 
+import { DotPattern } from "@/components/ui/dot-pattern";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import StackSphere from "@/components/ui/StackSphere";
@@ -12,7 +13,8 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 /** Full technical inventory, grouped. Each chip pops in on its own beat. */
 export default function Skills() {
   return (
-    <section id="skills" className="section-y grain relative bg-paper-2">
+    <section id="skills" className="section-y grain relative overflow-hidden bg-paper-2">
+      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
           <div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import AmbientOrbs from "@/components/ui/AmbientOrbs";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import GoldenSpiral from "@/components/ui/GoldenSpiral";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -18,6 +19,7 @@ import {
 export default function About() {
   return (
     <section id="about" className="section-y grain relative overflow-hidden bg-paper">
+      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <AmbientOrbs />
       <GoldenSpiral className="pointer-events-none absolute -right-24 top-1/2 -z-10 hidden h-[38rem] w-[38rem] -translate-y-1/2 text-ink/[0.06] lg:block" />
       <div className="container-x">

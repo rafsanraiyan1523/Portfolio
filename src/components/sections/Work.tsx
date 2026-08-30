@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useRef } from "react";
 
+import { DotPattern } from "@/components/ui/dot-pattern";
 import ProjectScreenshot from "@/components/ui/ProjectScreenshot";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -35,6 +36,7 @@ export default function Work() {
 
   return (
     <section id="work" className="section-t grain relative bg-paper-2">
+      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
       <div className="container-x">
         <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
           <div>
