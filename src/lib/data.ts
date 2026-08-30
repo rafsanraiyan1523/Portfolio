@@ -23,7 +23,7 @@ export const person = {
   timezoneLabel: "UTC+6",
   availability: "Open to remote, on-site & relocation",
   yearsExperience: "3+",
-  photo: "/rafsan-portrait.jpg",
+  photo: "/rafsan-portrait-2.jpg",
   /** Optional short loop for the retro-TV hero screen. Drop an .mp4 into /public and point this at it. */
   heroVideo: "" as string,
   socials: [
