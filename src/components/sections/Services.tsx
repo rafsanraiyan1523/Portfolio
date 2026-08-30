@@ -1,23 +1,14 @@
-"use client";
-
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-
 import AmbientOrbs from "@/components/ui/AmbientOrbs";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { services } from "@/lib/data";
-import { cn } from "@/lib/utils";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Expanding service rows. Hovering (or focusing) a row lifts it, reveals the
- * detail column and slides an accent panel in behind the number.
+ * "What I do" as a stack of standalone cards, one per discipline — everything
+ * visible up front rather than tucked behind a hover/expand interaction, and
+ * the same card at every breakpoint rather than a layout that reshuffles.
  */
 export default function Services() {
-  const [active, setActive] = useState<number | null>(0);
-
   return (
     <section id="services" className="section-y grain relative bg-paper">
       <AmbientOrbs
@@ -52,108 +43,61 @@ export default function Services() {
           </Reveal>
         </div>
 
-        <div className="mt-16 border-t border-ink/12 md:mt-24">
-          {services.map((service, i) => {
-            const isActive = active === i;
-
-            return (
-              <Reveal key={service.id} delay={i * 0.06} amount={0.2}>
+        <div className="mt-flow space-y-4 md:space-y-5">
+          {services.map((service, i) => (
+            <Reveal key={service.id} delay={i * 0.08} amount={0.2}>
+              <article className="group relative overflow-hidden rounded-2xl border border-ink/10 bg-paper-2/50 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ink/20 hover:bg-paper-2 md:p-8">
+                {/* Accent wash — fades in on hover, echoes the same corner-bleed
+                    treatment used on project cards elsewhere on the site. */}
                 <div
-                  className="group relative border-b border-ink/12"
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                >
-                  {/* Ink wash that wipes in on hover */}
-                  <motion.span
-                    aria-hidden
-                    className="absolute inset-0 -z-0 origin-bottom bg-ink"
-                    initial={false}
-                    animate={{ scaleY: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.6, ease: EASE }}
-                  />
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  style={{
+                    background: `radial-gradient(120% 140% at 0% 0%, ${service.accent}22, transparent 60%)`,
+                  }}
+                />
 
-                  <button
-                    type="button"
-                    onClick={() => setActive(isActive ? null : i)}
-                    aria-expanded={isActive}
-                    data-cursor="hover"
-                    className={cn(
-                      "relative z-10 flex w-full items-start gap-5 px-1 py-8 text-left transition-colors duration-500 md:gap-10 md:py-12",
-                      isActive ? "text-paper" : "text-ink",
-                    )}
+                <div className="relative flex items-center justify-between gap-4">
+                  <span
+                    className="rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em]"
+                    style={{ background: `${service.accent}1a`, color: service.accent }}
                   >
-                    <span
-                      className={cn(
-                        "mt-1.5 font-mono text-xs tracking-[0.12em] transition-colors duration-500 md:mt-3",
-                        isActive ? "text-lime" : "text-muted",
-                      )}
-                    >
-                      {service.number}
-                    </span>
-
-                    <div className="flex-1">
-                      <h3 className="display-md">{service.title}</h3>
-
-                      <AnimatePresence initial={false}>
-                        {isActive && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: EASE }}
-                            className="overflow-hidden"
-                          >
-                            <div className="grid gap-6 pt-6 md:grid-cols-2 md:gap-12 md:pt-8">
-                              <p className="max-w-md text-sm leading-relaxed text-paper/60 md:text-base">
-                                {service.blurb}
-                              </p>
-                              <ul className="flex flex-wrap content-start gap-2">
-                                {service.points.map((point, pi) => (
-                                  <motion.li
-                                    key={point}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                      delay: 0.12 + pi * 0.05,
-                                      duration: 0.4,
-                                      ease: EASE,
-                                    }}
-                                    className="rounded-full border border-paper/20 px-3.5 py-1.5 text-xs text-paper/70"
-                                  >
-                                    {point}
-                                  </motion.li>
-                                ))}
-                              </ul>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-
-                    {/* Chevron */}
-                    <span
-                      className={cn(
-                        "mt-2 grid size-9 shrink-0 place-items-center rounded-full border transition-all duration-500 md:mt-3 md:size-11",
-                        isActive
-                          ? "rotate-45 border-lime text-lime"
-                          : "border-ink/20 text-ink",
-                      )}
-                      aria-hidden
-                    >
-                      <svg viewBox="0 0 16 16" fill="none" className="size-4">
-                        <path
-                          d="M8 3v10M3 8h10"
-                          stroke="currentColor"
-                          strokeWidth="1.4"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </span>
-                  </button>
+                    Discipline {service.number}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="grid size-9 shrink-0 place-items-center rounded-full border border-ink/15 text-ink/40 transition-all duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:border-ink/30 group-hover:text-ink"
+                  >
+                    <svg viewBox="0 0 16 16" fill="none" className="size-3.5">
+                      <path
+                        d="M3 13L13 3M13 3H5.5M13 3V10.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
                 </div>
-              </Reveal>
-            );
-          })}
+
+                <h3 className="display-sm relative mt-5">{service.title}</h3>
+                <p className="relative mt-3 max-w-lg text-sm leading-relaxed text-muted md:text-base">
+                  {service.blurb}
+                </p>
+
+                <ul className="relative mt-6 flex flex-wrap gap-2 border-t border-ink/10 pt-5">
+                  {service.points.map((point) => (
+                    <li
+                      key={point}
+                      className="rounded-full border border-ink/12 px-3 py-1.5 text-xs text-ink/65"
+                    >
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>

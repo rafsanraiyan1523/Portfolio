@@ -106,8 +106,8 @@ function StackCard({
 
   return (
     <div
-      className="sticky top-0 flex min-h-[100svh] items-center justify-center px-5 py-10 md:px-10"
-      style={{ paddingTop: `calc(4rem + ${index * 14}px)` }}
+      className="sticky top-0 flex min-h-[100svh] items-center justify-center px-4 py-6 md:px-10 md:py-10"
+      style={{ paddingTop: `calc(2.5rem + ${index * 14}px)` }}
     >
       <motion.article
         style={{
@@ -137,12 +137,12 @@ function StackCard({
         )}
 
         <div
-          className={`relative z-10 grid gap-8 p-6 md:gap-12 md:p-10 lg:grid-cols-2 lg:items-center lg:p-14 ${
+          className={`relative z-10 grid gap-4 p-4 md:gap-12 md:p-10 lg:grid-cols-2 lg:items-center lg:p-14 ${
             isLight ? "text-ink" : "on-dark text-paper"
           }`}
         >
           {/* ---------- Copy ---------- */}
-          <div>
+          <div className="order-2 lg:order-1">
             <div className="flex flex-wrap items-center gap-3">
               <span
                 className="rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink"
@@ -159,10 +159,10 @@ function StackCard({
               </span>
             </div>
 
-            <h3 className="display-md mt-6">{project.name}</h3>
+            <h3 className="display-md mt-3 md:mt-6">{project.name}</h3>
 
             <p
-              className={`mt-3 text-lg tracking-tight md:text-xl ${
+              className={`mt-1.5 text-base tracking-tight md:mt-3 md:text-xl ${
                 isLight ? "text-ink/70" : "text-paper/70"
               }`}
             >
@@ -170,7 +170,7 @@ function StackCard({
             </p>
 
             <p
-              className={`mt-5 max-w-lg text-sm leading-relaxed md:text-base ${
+              className={`mt-2 line-clamp-3 max-w-lg text-sm leading-relaxed md:mt-5 md:line-clamp-none md:text-base ${
                 isLight ? "text-muted" : "text-paper/50"
               }`}
             >
@@ -179,7 +179,7 @@ function StackCard({
 
             {/* Results */}
             <dl
-              className={`mt-8 grid grid-cols-3 gap-4 border-t pt-6 ${
+              className={`mt-4 grid grid-cols-3 gap-4 border-t pt-4 md:mt-8 md:pt-6 ${
                 isLight ? "border-ink/12" : "border-paper/15"
               }`}
             >
@@ -187,7 +187,7 @@ function StackCard({
                 <div key={result.label}>
                   <dt className="sr-only">{result.label}</dt>
                   <dd>
-                    <span className="block text-2xl font-medium tracking-tight md:text-3xl">
+                    <span className="block text-lg font-medium tracking-tight md:text-3xl">
                       {result.value}
                     </span>
                     <span
@@ -203,7 +203,7 @@ function StackCard({
             </dl>
 
             {/* Stack + links */}
-            <div className="mt-7 flex flex-wrap items-center gap-2">
+            <div className="mt-4 flex flex-wrap items-center gap-2 md:mt-7">
               {project.stack.map((tech) => (
                 <span
                   key={tech}
@@ -219,7 +219,7 @@ function StackCard({
             </div>
 
             {project.links?.length ? (
-              <div className="mt-7 flex flex-wrap gap-5">
+              <div className="mt-4 flex flex-wrap gap-5 md:mt-7">
                 {project.links.map((link) => (
                   <Link
                     key={link.href}
@@ -248,13 +248,17 @@ function StackCard({
             ) : null}
           </div>
 
-          {/* ---------- Visual ---------- */}
+          {/* ---------- Visual ----------
+              Comes first on mobile: the sticky card is capped to 100svh and
+              clips anything past it, so with a full copy block the image
+              — the actual point of a "selected work" card — never fit.
+              Leading with it means it's the one thing that's never clipped. */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.9, ease: EASE }}
-            className="relative"
+            className="order-1 lg:order-2"
           >
             <ProjectScreenshot
               src={project.image}

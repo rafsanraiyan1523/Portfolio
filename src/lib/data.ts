@@ -89,6 +89,7 @@ export const services = [
     blurb:
       "Production applications from database schema to deployed interface — built to be fast, typed and maintainable.",
     points: ["Next.js & React", "Laravel & Django", "REST APIs, JWT & OAuth", "MySQL & Supabase"],
+    accent: "#6366F1",
   },
   {
     id: "ecommerce",
@@ -97,6 +98,7 @@ export const services = [
     blurb:
       "WooCommerce and Shopify stores that actually sell — custom themes, plugins, checkout flows and merchandising systems.",
     points: ["WooCommerce & Shopify", "Custom themes & plugins", "Checkout optimisation", "AOV & cross-sell systems"],
+    accent: "#2ED3B7",
   },
   {
     id: "seo",
@@ -105,6 +107,7 @@ export const services = [
     blurb:
       "The engineering half of growth: Core Web Vitals, crawlability, structured data and experiments that move revenue.",
     points: ["Core Web Vitals", "Schema markup & RankMath", "A/B testing", "Funnel & CRO analysis"],
+    accent: "#E8C547",
   },
   {
     id: "data",
@@ -113,6 +116,7 @@ export const services = [
     blurb:
       "Reporting pipelines, dashboards and scripts that remove manual work and put decisions in front of leadership faster.",
     points: ["Apps Script automation", "GA4 & Tag Manager", "Power BI dashboards", "Data validation at scale"],
+    accent: "#4A9BFF",
   },
 ] as const;
 
