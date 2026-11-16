@@ -1,105 +1,67 @@
-"use client";
+import type { ReactNode } from "react";
 
-import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
-
-import Magnetic from "@/components/ui/Magnetic";
+import Icon, { type IconName } from "@/components/ui/Icon";
 import { cn } from "@/lib/utils";
 
-type Variant = "solid" | "lime" | "outline" | "ghost";
-type Size = "md" | "lg";
-
-const base =
-  "group/btn relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full font-medium transition-colors duration-300";
-
-const sizes: Record<Size, string> = {
-  md: "h-11 px-5 text-sm",
-  lg: "h-14 px-7 text-[0.95rem] md:h-16 md:px-9 md:text-base",
-};
+type Variant = "solid" | "outline" | "accent" | "light" | "ghost-dark";
 
 const variants: Record<Variant, string> = {
-  solid: "bg-ink text-paper",
-  lime: "bg-lime text-paper",
-  outline: "border border-ink/20 text-ink hover:border-ink/40",
-  ghost: "border border-paper/25 text-paper hover:border-paper/50",
+  solid:
+    "bg-black text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)] hover:bg-ink hover:shadow-[0_16px_32px_-14px_rgba(0,0,0,0.6)]",
+  outline: "border border-line-strong bg-card text-ink hover:border-ink hover:bg-white",
+  accent:
+    "bg-gradient-to-r from-accent to-accent-ink text-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.55)] hover:shadow-[0_18px_32px_-14px_rgba(0,0,0,0.6)]",
+  light: "bg-white text-black hover:bg-paper",
+  "ghost-dark": "border border-white/20 text-white hover:border-white/50 hover:bg-white/5",
 };
 
-/** Fill that wipes up from the bottom on hover. */
-const fills: Record<Variant, string> = {
-  solid: "bg-lime",
-  lime: "bg-ink",
-  outline: "bg-ink",
-  ghost: "bg-paper",
-};
-
-const hoverText: Record<Variant, string> = {
-  solid: "group-hover/btn:text-paper",
-  lime: "group-hover/btn:text-paper",
-  outline: "group-hover/btn:text-paper",
-  ghost: "group-hover/btn:text-ink",
-};
-
-type Props = {
-  children: ReactNode;
-  variant?: Variant;
-  size?: Size;
-  className?: string;
-  icon?: ReactNode;
-  magnetic?: boolean;
-} & Omit<ComponentProps<typeof Link>, "className" | "children">;
-
+/**
+ * Pill button in the studio style: bold uppercase label, generous padding.
+ * Always rendered as a link — every CTA on the site goes somewhere.
+ */
 export default function Button({
+  href,
   children,
   variant = "solid",
-  size = "lg",
-  className,
   icon,
-  magnetic = true,
-  ...rest
-}: Props) {
-  const inner = (
-    <Link
-      className={cn(base, sizes[size], variants[variant], hoverText[variant], className)}
-      data-cursor="hover"
-      {...rest}
+  iconEnd,
+  external,
+  className,
+  size = "md",
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: Variant;
+  icon?: IconName | ReactNode;
+  iconEnd?: IconName;
+  external?: boolean;
+  className?: string;
+  size?: "md" | "sm";
+}) {
+  const isExternal = external ?? /^(https?:|mailto:|tel:)/.test(href);
+  const renderIcon = (value: IconName | ReactNode) =>
+    typeof value === "string" ? <Icon name={value as IconName} size={17} /> : value;
+
+  return (
+    <a
+      href={href}
+      {...(isExternal && href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+      className={cn(
+        "group inline-flex items-center justify-center gap-2.5 rounded-full font-semibold uppercase tracking-[0.06em] transition-all duration-300 ease-out hover:-translate-y-0.5 active:translate-y-0",
+        size === "md" ? "h-12 px-7 text-[0.75rem] sm:h-[3.25rem] sm:px-8" : "h-10 px-5 text-[0.6875rem]",
+        variants[variant],
+        className,
+      )}
     >
-      {/* Wipe fill */}
-      <span
-        aria-hidden
-        className={cn(
-          "absolute inset-0 -z-0 translate-y-full rounded-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0",
-          fills[variant],
-        )}
-      />
-      <span className="relative z-10 flex items-center gap-2.5">
-        {children}
-        {icon ?? <Arrow />}
-      </span>
-    </Link>
-  );
-
-  return magnetic ? <Magnetic className="inline-block">{inner}</Magnetic> : inner;
-}
-
-function Arrow() {
-  return (
-    <span className="relative block size-4 overflow-hidden" aria-hidden>
-      <ArrowSvg className="absolute inset-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-x-full group-hover/btn:-translate-y-full" />
-      <ArrowSvg className="absolute inset-0 -translate-x-full translate-y-full transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-x-0 group-hover/btn:translate-y-0" />
-    </span>
-  );
-}
-
-function ArrowSvg({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" className={cn("size-4", className)}>
-      <path
-        d="M3 13L13 3M13 3H5.5M13 3V10.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      {icon ? renderIcon(icon) : null}
+      <span>{children}</span>
+      {iconEnd ? (
+        <Icon
+          name={iconEnd}
+          size={16}
+          className="transition-transform duration-300 group-hover:translate-x-0.5"
+        />
+      ) : null}
+    </a>
   );
 }

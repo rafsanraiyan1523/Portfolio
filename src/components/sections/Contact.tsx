@@ -3,11 +3,9 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
-import KineticGrid from "@/components/ui/kinetic-grid";
-import Magnetic from "@/components/ui/Magnetic";
-import Marquee from "@/components/ui/Marquee";
+import Button from "@/components/ui/Button";
+import Icon, { WhatsAppIcon } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
-import RevealText from "@/components/ui/RevealText";
 import { person } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
@@ -22,13 +20,7 @@ const engagements = [
   "Something else",
 ];
 
-const budgets = [
-  "Under $2K",
-  "$2K – $5K",
-  "$5K – $10K",
-  "$10K+",
-  "Salaried role",
-];
+const budgets = ["Under $2K", "$2K – $5K", "$5K – $10K", "$10K+", "Salaried role"];
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -58,12 +50,9 @@ export default function Contact() {
         return;
       }
 
-      const payload = (await res.json().catch(() => ({}))) as {
-        error?: string;
-        fallback?: boolean;
-      };
+      const payload = (await res.json().catch(() => ({}))) as { error?: string; fallback?: boolean };
 
-      // Delivery isn't wired up yet — hand off to the visitor's mail client
+      // Delivery isn't wired up yet: hand off to the visitor's mail client
       // so the message still reaches the inbox.
       if (payload.fallback) {
         const subject = encodeURIComponent(`Portfolio enquiry — ${data.name || ""}`);
@@ -85,7 +74,7 @@ export default function Contact() {
       }
 
       setStatus("error");
-      setError(payload.error ?? "Something went wrong. Please try again.");
+      setError(payload.error ?? "Something went wrong. Please try again, or email me directly.");
     } catch {
       setStatus("error");
       setError("Network error. Please email me directly.");
@@ -98,325 +87,198 @@ export default function Contact() {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      /* Clipboard unavailable — the mailto link below still works. */
+      /* Clipboard unavailable: the mailto link still works. */
     }
   }
 
-  return (
-    <section
-      id="contact"
-      className="section-t on-dark relative overflow-hidden bg-ink text-paper"
-    >
-      {/* Ambient wash */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-[15%] top-0 size-[60vw] rounded-full opacity-40 blur-[130px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(191,23,71,0.32) 0%, rgba(191,23,71,0) 70%)",
-        }}
-      />
+  const channels = [
+    {
+      key: "whatsapp",
+      label: "WhatsApp",
+      value: person.whatsappDisplay,
+      href: `https://wa.me/${person.whatsapp}`,
+      icon: <WhatsAppIcon size={22} />,
+    },
+    {
+      key: "call",
+      label: "Call",
+      value: person.phone,
+      href: `tel:${person.phoneHref}`,
+      icon: <Icon name="phone" size={22} />,
+    },
+    {
+      key: "email",
+      label: "Email",
+      value: person.email,
+      href: `mailto:${person.email}`,
+      icon: <Icon name="mail" size={22} />,
+    },
+  ];
 
-      {/* Interactive dot grid — warps toward the pointer, ripples on click.
-          Sits behind the form/links (they're rendered after it, no z-index
-          needed) and its own canvas is pointer-events-none, so nothing here
-          ever steals a click meant for the real UI. */}
-      <KineticGrid className="pointer-events-auto">
-        <div className="container-x relative z-10">
-          <div className="grid gap-16 lg:grid-cols-[1fr_1.618fr] lg:gap-16">
-            {/* ---------------- Pitch ---------------- */}
-            <div>
-              <div className="mb-8 flex items-center gap-4">
-                <span className="size-1.5 rounded-full bg-lime" />
-                <span className="eyebrow text-paper/55">Contact</span>
-              </div>
-  
-              <RevealText
-                as="h2"
-                className="display-lg text-paper"
-                segments={[
-                  { text: "Let’s build something that" },
-                  { text: "converts.", className: "accent-serif text-lime" },
-                ]}
-              />
-  
-              <Reveal delay={0.15}>
-                <p className="mt-8 max-w-md text-base leading-relaxed text-paper/55 md:text-lg">
-                  Hiring, contracting, or just want a second opinion on why your
-                  store isn&rsquo;t converting — send it over. I reply within a
-                  working day.
-                </p>
+  return (
+    <section id="contact" aria-labelledby="contact-title" className="section-y">
+      <div className="shell">
+        <Reveal className="mx-auto max-w-5xl text-center">
+          <span className="mx-auto grid size-16 place-items-center rounded-full bg-black text-base font-bold text-white">
+            {person.initials}
+          </span>
+          <h2 id="contact-title" className="display-hero mt-8 text-[clamp(2.5rem,7vw,5.5rem)]">
+            Ready to build something that sells?
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted sm:text-xl">
+            Hiring for a role or planning a build, tell me what you need. I reply within a working
+            day, usually sooner.
+          </p>
+          <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <Button href={`mailto:${person.email}`} variant="solid" icon="mail">
+              Email me
+            </Button>
+            <Button href={`tel:${person.phoneHref}`} variant="outline" icon="phone">
+              Call {person.phone}
+            </Button>
+          </div>
+        </Reveal>
+
+        <ul className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
+          {channels.map((c, i) => (
+            <li key={c.key}>
+              <Reveal delay={i * 0.06}>
+                <a
+                  href={c.href}
+                  {...(c.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+                  className="card group flex flex-col items-center px-4 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-30px_rgba(27,27,27,0.45)]"
+                >
+                  <span className={cn(c.key === "whatsapp" ? "text-[#128c4a]" : "text-accent-ink")}>{c.icon}</span>
+                  <span className="label mt-3 text-muted">{c.label}</span>
+                  <span className="mt-2 break-all text-[0.9375rem] font-semibold text-ink">{c.value}</span>
+                </a>
               </Reveal>
-  
-              {/* Direct channels */}
-              <Reveal delay={0.25} className="mt-10 space-y-px overflow-hidden rounded-2xl border border-paper/15 bg-paper/10">
-                <div className="flex items-center justify-between gap-4 bg-ink px-5 py-4">
-                  <div className="min-w-0">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-paper/40">
-                      Email
-                    </p>
-                    <a
-                      href={`mailto:${person.email}`}
-                      data-cursor="hover"
-                      className="link-underline mt-1 block truncate text-sm text-paper md:text-base"
-                    >
-                      {person.email}
-                    </a>
-                  </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* ---------------- Message form ---------------- */}
+        <Reveal className="mx-auto mt-16 max-w-4xl sm:mt-24">
+          <div className="card p-6 sm:p-10">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="display-md">Or send a message</h3>
+                <p className="mt-2 text-sm text-muted">It lands in the same inbox as email.</p>
+              </div>
+              <button
+                type="button"
+                onClick={copyEmail}
+                className="inline-flex items-center gap-2 self-start text-sm font-semibold text-accent-ink hover:underline sm:self-auto"
+              >
+                <Icon name="copy" size={16} />
+                <span aria-live="polite">{copied ? "Email copied" : "Copy email address"}</span>
+              </button>
+            </div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              {status === "sent" ? (
+                <motion.div
+                  key="sent"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  className="mt-8 rounded-2xl bg-paper-2 p-8 text-center"
+                  role="status"
+                >
+                  <Icon name="check" size={32} className="mx-auto text-accent-ink" />
+                  <p className="mt-4 text-lg font-semibold text-ink">Message on its way.</p>
+                  <p className="mt-2 text-sm text-muted">I will reply within a working day.</p>
                   <button
                     type="button"
-                    onClick={copyEmail}
-                    data-cursor="hover"
-                    className="shrink-0 rounded-full border border-paper/25 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors hover:border-lime hover:text-lime"
+                    onClick={() => setStatus("idle")}
+                    className="mt-6 text-sm font-semibold text-accent-ink hover:underline"
                   >
-                    {copied ? "Copied" : "Copy"}
+                    Send another
                   </button>
-                </div>
-  
-                <div className="flex items-center justify-between gap-4 bg-ink px-5 py-4">
-                  <div className="min-w-0">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-paper/40">
-                      Phone / WhatsApp
-                    </p>
-                    <a
-                      href={`tel:${person.phoneHref}`}
-                      data-cursor="hover"
-                      className="link-underline mt-1 block text-sm text-paper md:text-base"
-                    >
-                      {person.phone}
-                    </a>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form"
+                  onSubmit={handleSubmit}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="mt-8 grid gap-4 sm:grid-cols-2"
+                  noValidate={false}
+                >
+                  {/* Honeypot: hidden from people, irresistible to bots. */}
+                  <div aria-hidden className="absolute -left-[9999px]">
+                    <label>
+                      Website
+                      <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+                    </label>
                   </div>
-                  <a
-                    href={`https://wa.me/${person.whatsapp}?text=${encodeURIComponent(
-                      `Hi ${person.firstName}, I found your portfolio and wanted to connect.`,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-cursor="hover"
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-paper/25 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors hover:border-lime hover:text-lime"
-                  >
-                    <svg viewBox="0 0 16 16" fill="currentColor" className="size-3">
-                      <path d="M8 1a7 7 0 0 0-6.05 10.5L1 15l3.6-.94A7 7 0 1 0 8 1Zm0 1.4a5.6 5.6 0 0 1 4.75 8.56l-.16.25.31 1.86-1.9-.5-.24.14A5.6 5.6 0 1 1 8 2.4Zm-2.4 2.5c-.14 0-.36.05-.55.27-.19.21-.72.7-.72 1.72s.74 2 .84 2.14c.1.14 1.44 2.3 3.6 3.13 1.78.69 2.14.55 2.53.52.39-.04 1.26-.51 1.44-1.01.18-.5.18-.92.13-1.01-.05-.09-.19-.14-.38-.24-.2-.1-1.16-.57-1.34-.64-.18-.06-.31-.09-.44.1-.13.19-.5.63-.62.77-.11.13-.23.15-.42.05-.2-.1-.83-.3-1.58-.97-.58-.52-.98-1.16-1.09-1.36-.11-.19-.01-.3.09-.4.09-.09.2-.23.3-.35.1-.11.13-.19.2-.32.06-.13.03-.24-.02-.34-.05-.1-.44-1.08-.61-1.47-.16-.39-.32-.33-.44-.34l-.38-.01Z" />
-                    </svg>
-                    WhatsApp
-                  </a>
-                </div>
-  
-                <div className="bg-ink px-5 py-4">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-paper/40">
-                    Based in
-                  </p>
-                  <p className="mt-1 text-sm text-paper md:text-base">
-                    {person.location} · {person.timezoneLabel}
-                  </p>
-                </div>
-              </Reveal>
-            </div>
-  
-            {/* ---------------- Form ---------------- */}
-            <div>
-              <Reveal delay={0.1}>
-                <div className="relative rounded-3xl border border-paper/15 bg-paper/[0.04] p-6 backdrop-blur-sm md:p-9">
-                  <AnimatePresence mode="wait">
-                    {status === "sent" ? (
-                      <motion.div
-                        key="sent"
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5, ease: EASE }}
-                        className="flex min-h-[26rem] flex-col items-start justify-center"
-                      >
-                        <span className="grid size-14 place-items-center rounded-full bg-lime text-paper">
-                          <svg viewBox="0 0 16 16" fill="none" className="size-6">
-                            <path
-                              d="M3 8.5l3.5 3.5L13 5"
-                              stroke="currentColor"
-                              strokeWidth="1.75"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
-                        <h3 className="display-sm mt-6">Message on its way.</h3>
-                        <p className="mt-3 max-w-sm text-paper/55">
-                          Thanks for reaching out — I&rsquo;ll get back to you
-                          within a working day.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setStatus("idle")}
-                          data-cursor="hover"
-                          className="link-underline mt-6 text-sm font-medium text-lime"
-                        >
-                          Send another
-                        </button>
-                      </motion.div>
-                    ) : (
-                      <motion.form
-                        key="form"
-                        onSubmit={handleSubmit}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="space-y-5"
-                        noValidate
-                      >
-                        {/* Honeypot */}
-                        <input
-                          type="text"
-                          name="website"
-                          tabIndex={-1}
-                          autoComplete="off"
-                          aria-hidden
-                          className="sr-only"
-                        />
-  
-                        <div className="grid gap-5 sm:grid-cols-2">
-                          <Field label="Name" name="name" required placeholder="Your name" />
-                          <Field
-                            label="Email"
-                            name="email"
-                            type="email"
-                            required
-                            placeholder="you@company.com"
-                          />
-                        </div>
-  
-                        <Field
-                          label="Company"
-                          name="company"
-                          placeholder="Optional"
-                        />
-  
-                        <div className="grid gap-5 sm:grid-cols-2">
-                          <SelectField
-                            label="Engagement"
-                            name="engagement"
-                            options={engagements}
-                          />
-                          <SelectField label="Budget" name="budget" options={budgets} />
-                        </div>
-  
-                        <Field
-                          label="Project details"
-                          name="message"
-                          required
-                          textarea
-                          placeholder="What are you building, and what's in the way?"
-                        />
-  
-                        {status === "error" && error && (
-                          <p role="alert" className="text-sm text-[#ff9a7a]">
-                            {error}
-                          </p>
-                        )}
-  
-                        <div className="flex flex-wrap items-center gap-4 pt-2">
-                          <Magnetic className="inline-block">
-                            <button
-                              type="submit"
-                              disabled={status === "sending"}
-                              data-cursor="hover"
-                              className="group/btn relative inline-flex h-14 items-center justify-center gap-2.5 overflow-hidden rounded-full bg-lime px-8 text-[0.95rem] font-medium text-paper transition-colors duration-300 group-hover/btn:text-ink disabled:opacity-60 md:h-16 md:px-10"
-                            >
-                              <span
-                                aria-hidden
-                                className="absolute inset-0 translate-y-full rounded-full bg-paper transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0"
-                              />
-                              <span className="relative z-10">
-                                {status === "sending" ? "Sending…" : "Send message"}
-                              </span>
-                            </button>
-                          </Magnetic>
-  
-                          <p className="text-xs text-paper/40">
-                            Or email{" "}
-                            <a
-                              href={`mailto:${person.email}`}
-                              className="link-underline text-paper/70"
-                            >
-                              {person.email}
-                            </a>
-                          </p>
-                        </div>
-                      </motion.form>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </KineticGrid>
 
-      {/* Oversized closing marquee */}
-      <div className="mt-24 border-t border-paper/12 py-8 md:mt-32">
-        <Marquee speed={28} fade={false}>
-          <span className="flex items-center gap-10 px-5">
-            <span className="whitespace-nowrap text-[13vw] font-medium leading-none tracking-tighter text-paper/90 md:text-[9vw]">
-              Available for work
-            </span>
-            <span className="text-lime" aria-hidden>
-              ✳
-            </span>
-            <span className="accent-serif whitespace-nowrap text-[13vw] leading-none text-lime md:text-[9vw]">
-              Let&rsquo;s talk
-            </span>
-            <span className="text-lime" aria-hidden>
-              ✳
-            </span>
-          </span>
-        </Marquee>
+                  <Field label="Name" name="name" required placeholder="Your name" autoComplete="name" minLength={2} />
+                  <Field
+                    label="Email"
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="you@company.com"
+                    autoComplete="email"
+                  />
+                  <Field label="Company" name="company" placeholder="Optional" autoComplete="organization" />
+                  <SelectField label="What is it about?" name="engagement" options={engagements} />
+                  <SelectField label="Budget" name="budget" options={budgets} className="sm:col-span-2" />
+                  <label className="grid gap-2 sm:col-span-2">
+                    <span className="text-sm font-medium text-ink">Message</span>
+                    <textarea
+                      name="message"
+                      required
+                      minLength={10}
+                      rows={5}
+                      placeholder="A few lines on the role or the project"
+                      className="w-full resize-y rounded-2xl border border-line-strong bg-paper px-4 py-3.5 text-[0.9375rem] text-ink outline-none transition-colors placeholder:text-muted focus:border-ink"
+                    />
+                  </label>
+
+                  {status === "error" && error ? (
+                    <p role="alert" className="text-sm font-medium text-accent-ink sm:col-span-2">
+                      {error}
+                    </p>
+                  ) : null}
+
+                  <div className="sm:col-span-2">
+                    <button
+                      type="submit"
+                      disabled={status === "sending"}
+                      className="inline-flex h-[3.25rem] w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-accent to-accent-ink px-8 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-white shadow-[0_12px_24px_-12px_rgba(27,27,27,0.45)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70 sm:w-auto"
+                    >
+                      {status === "sending" ? "Sending…" : "Send message"}
+                      <Icon name="send" size={16} />
+                    </button>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-/* ------------------------------------------------------------------ */
+const inputClass =
+  "h-12 w-full rounded-2xl border border-line-strong bg-paper px-4 text-[0.9375rem] text-ink outline-none transition-colors placeholder:text-muted focus:border-ink";
 
 function Field({
   label,
-  name,
-  type = "text",
-  required = false,
-  textarea = false,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  textarea?: boolean;
-  placeholder?: string;
-}) {
-  const shared =
-    "peer w-full rounded-xl border border-paper/15 bg-transparent px-4 py-3.5 text-sm text-paper placeholder:text-paper/25 transition-colors duration-300 focus:border-lime focus:outline-none";
-
+  ...props
+}: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <label className="block">
-      <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.14em] text-paper/45">
+    <label className="grid gap-2">
+      <span className="text-sm font-medium text-ink">
         {label}
-        {required && <span className="ml-1 text-lime">*</span>}
+        {props.required ? <span className="text-accent-ink"> *</span> : null}
       </span>
-      {textarea ? (
-        <textarea
-          name={name}
-          required={required}
-          rows={5}
-          placeholder={placeholder}
-          className={cn(shared, "resize-none")}
-        />
-      ) : (
-        <input
-          type={type}
-          name={name}
-          required={required}
-          placeholder={placeholder}
-          className={shared}
-        />
-      )}
+      <input {...props} className={inputClass} />
     </label>
   );
 }
@@ -425,31 +287,21 @@ function SelectField({
   label,
   name,
   options,
+  className,
 }: {
   label: string;
   name: string;
-  options: readonly string[];
+  options: string[];
+  className?: string;
 }) {
   return (
-    <label className="block">
-      <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.14em] text-paper/45">
-        {label}
-      </span>
-      <select
-        name={name}
-        defaultValue=""
-        className="w-full appearance-none rounded-xl border border-paper/15 bg-transparent bg-[length:12px] bg-[right_1rem_center] bg-no-repeat px-4 py-3.5 text-sm text-paper transition-colors duration-300 focus:border-lime focus:outline-none"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23f4f2ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
-        }}
-      >
-        <option value="" disabled className="bg-ink text-paper">
-          Select…
-        </option>
-        {options.map((option) => (
-          <option key={option} value={option} className="bg-ink text-paper">
-            {option}
+    <label className={cn("grid gap-2", className)}>
+      <span className="text-sm font-medium text-ink">{label}</span>
+      <select name={name} defaultValue="" className={cn(inputClass, "appearance-none bg-[length:16px] bg-[right_1rem_center] bg-no-repeat pr-10")} style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b1b1b' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")" }}>
+        <option value="">Choose one</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
           </option>
         ))}
       </select>

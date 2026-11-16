@@ -3,11 +3,11 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
-import { DotPattern } from "@/components/ui/dot-pattern";
-import Reveal from "@/components/ui/Reveal";
+import Icon from "@/components/ui/Icon";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { faqs } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { keepHyphens } from "@/lib/typography";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -15,101 +15,56 @@ export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="section-y grain relative bg-paper">
-      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
-      <div className="container-x">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.618fr] lg:gap-16">
-          <div>
-            <div className="lg:sticky lg:top-32">
-              <SectionHeading
-                eyebrow="FAQ"
-                segments={[
-                  { text: "Questions," },
-                  { text: "answered", className: "accent-serif" },
-                  { text: "up front." },
-                ]}
-                headingClassName="display-md"
-              />
-              <Reveal delay={0.15}>
-                <p className="mt-8 max-w-sm text-base leading-relaxed text-muted">
-                  Anything not covered here — just ask. The form below reaches me
-                  directly.
-                </p>
-              </Reveal>
-            </div>
-          </div>
+    <section id="faq" aria-labelledby="faq-title" className="section-y bg-paper-2/60">
+      <div className="shell">
+        <SectionHeading id="faq-title" title="Questions, answered." />
 
-          <div>
-            <div className="border-t border-ink/12">
-              {faqs.map((faq, i) => {
-                const isOpen = open === i;
-
-                return (
-                  <Reveal key={faq.q} delay={i * 0.05} amount={0.2}>
-                    <div className="border-b border-ink/12">
-                      <h3>
-                        <button
-                          type="button"
-                          onClick={() => setOpen(isOpen ? null : i)}
-                          aria-expanded={isOpen}
-                          data-cursor="hover"
-                          className="group flex w-full items-start gap-5 py-6 text-left md:py-7"
-                        >
-                          <span className="mt-1 font-mono text-[11px] tracking-[0.12em] text-muted">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span
-                            className={cn(
-                              "flex-1 text-lg font-medium tracking-tight transition-colors duration-300 md:text-xl",
-                              isOpen ? "text-ink" : "text-ink/80 group-hover:text-ink",
-                            )}
-                          >
-                            {faq.q}
-                          </span>
-
-                          {/* Plus → minus */}
-                          <span
-                            aria-hidden
-                            className={cn(
-                              "relative mt-1 grid size-7 shrink-0 place-items-center rounded-full border transition-colors duration-500",
-                              isOpen
-                                ? "border-ink bg-ink text-paper"
-                                : "border-ink/20 text-ink",
-                            )}
-                          >
-                            <span className="absolute h-px w-3 bg-current" />
-                            <span
-                              className={cn(
-                                "absolute h-3 w-px bg-current transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                                isOpen ? "scale-y-0" : "scale-y-100",
-                              )}
-                            />
-                          </span>
-                        </button>
-                      </h3>
-
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: EASE }}
-                            className="overflow-hidden"
-                          >
-                            <p className="max-w-xl pb-7 pl-10 text-sm leading-relaxed text-muted md:text-base">
-                              {faq.a}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </Reveal>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <ul className="mx-auto mt-12 grid max-w-3xl gap-3 sm:mt-16">
+          {faqs.map((item, i) => {
+            const isOpen = open === i;
+            return (
+              <li key={item.q} className={cn("card overflow-hidden transition-shadow duration-500", isOpen && "shadow-[0_24px_48px_-34px_rgba(27,27,27,0.4)]")}>
+                <h3>
+                  <button
+                    type="button"
+                    id={`faq-q-${i}`}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-a-${i}`}
+                    onClick={() => setOpen(isOpen ? null : i)}
+                    className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left text-base font-semibold text-ink sm:px-7 sm:py-6 sm:text-lg"
+                  >
+                    {item.q}
+                    <span
+                      className={cn(
+                        "grid size-9 shrink-0 place-items-center rounded-full transition-all duration-500",
+                        isOpen ? "rotate-45 bg-black text-white" : "bg-paper-2 text-ink",
+                      )}
+                    >
+                      <Icon name="plus" size={16} />
+                    </span>
+                  </button>
+                </h3>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      id={`faq-a-${i}`}
+                      role="region"
+                      aria-labelledby={`faq-q-${i}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.45, ease: EASE }}
+                    >
+                      <p className="max-w-[65ch] px-6 pb-6 text-[0.9375rem] leading-relaxed text-muted sm:px-7 sm:pb-7">
+                        {keepHyphens(item.a)}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

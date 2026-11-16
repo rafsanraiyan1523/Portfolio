@@ -1,48 +1,82 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 
-import Button from "@/components/ui/Button";
+import Icon from "@/components/ui/Icon";
 import { navLinks, person } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Nav() {
-  const { scrollY } = useScroll();
-  const [hidden, setHidden] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+/**
+ * Tracks which section is under the nav so its link can carry the underline.
+ * Reads scroll position directly (the last section whose top has passed 40% of
+ * the viewport) rather than an IntersectionObserver band, so a long jump, a
+ * section taller than the band, or the footer at the very bottom can never
+ * leave a stale link lit.
+ */
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState(ids[0]);
 
-  // A nav-triggered jump reads as "scrolling down" too, which would hide the
-  // header the instant it's used to navigate — right when the visitor might
-  // want to click another link. Suppress auto-hide for the duration of that
-  // scroll (Lenis' scroll duration is 1.1s; 1.4s covers it with margin).
-  const suppressHideRef = useRef(false);
-  const handleNavigate = () => {
-    suppressHideRef.current = true;
-    window.setTimeout(() => {
-      suppressHideRef.current = false;
-    }, 1400);
-  };
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    const previous = scrollY.getPrevious() ?? 0;
-    setScrolled(latest > 24);
-    if (open || suppressHideRef.current) return;
-    // Hide on scroll down past the hero, reveal on any upward scroll.
-    setHidden(latest > previous && latest > 320);
-  });
-
-  // Lock scroll while the mobile menu is open.
   useEffect(() => {
-    document.documentElement.classList.toggle("lenis-stopped", open);
-    return () => document.documentElement.classList.remove("lenis-stopped");
-  }, [open]);
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const line = window.innerHeight * 0.4;
+      const atBottom =
+        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+      let current = ids[0];
+      let best = -Infinity;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= line && top > best) {
+          best = top;
+          current = id;
+        }
+      }
+      if (atBottom) current = "contact";
+      setActive(parentOf[current] ?? current);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [ids]);
 
-  // Close on Escape.
+  return active;
+}
+
+// Sections without their own nav link light up the item they sit under.
+const parentOf: Record<string, string> = {
+  toolkit: "work",
+  process: "experience",
+  credentials: "experience",
+  faq: "contact",
+};
+const sectionIds = [...navLinks.map((l) => l.href.slice(1)), ...Object.keys(parentOf)];
+
+export default function Nav() {
+  const active = useActiveSection(sectionIds);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -51,167 +85,114 @@ export default function Nav() {
   }, [open]);
 
   return (
-    <>
-      <motion.header
-        className="fixed inset-x-0 top-0 z-[100]"
-        initial={{ y: -100 }}
-        animate={{ y: hidden ? "-120%" : 0 }}
-        transition={{ duration: 0.5, ease: EASE }}
-      >
-        <div className="container-x">
-          <div
-            className={cn(
-              "mt-3 flex items-center justify-between gap-4 rounded-full border px-4 py-2.5 transition-all duration-500 md:mt-5 md:px-5",
-              scrolled || open
-                ? "border-ink/10 bg-paper/80 shadow-[0_8px_40px_-16px_rgba(12,12,14,0.28)] backdrop-blur-xl"
-                : "border-transparent bg-transparent",
-            )}
-          >
-            {/* Wordmark */}
-            <Link
-              href="#top"
-              className="group flex items-center gap-2.5"
-              data-cursor="hover"
-              aria-label={`${person.name} — home`}
-            >
-              <span className="grid size-9 place-items-center rounded-full bg-ink text-[11px] font-semibold tracking-tight text-paper transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-[360deg]">
-                {person.initials}
-              </span>
-              <span className="hidden text-sm font-medium tracking-tight sm:block">
-                {person.name}
-              </span>
-            </Link>
-
-            {/* Desktop links */}
-            <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-              {navLinks.map((link) => (
-                <NavLink key={link.href} href={link.href} onClick={handleNavigate}>
-                  {link.label}
-                </NavLink>
-              ))}
-            </nav>
-
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:block">
-                <Button href="#contact" size="md" variant="solid" onClick={handleNavigate}>
-                  Let&rsquo;s talk
-                </Button>
-              </div>
-
-              {/* Menu toggle */}
-              <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                aria-expanded={open}
-                aria-controls="mobile-menu"
-                aria-label={open ? "Close menu" : "Open menu"}
-                data-cursor="hover"
-                className="grid size-11 shrink-0 place-items-center rounded-full border border-ink/15 lg:hidden"
-              >
-                <span className="relative block h-3 w-5">
-                  <span
-                    className={cn(
-                      "absolute left-0 block h-px w-full bg-ink transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                      open ? "top-1.5 rotate-45" : "top-0",
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      "absolute left-0 block h-px w-full bg-ink transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                      open ? "top-1.5 -rotate-45" : "top-3",
-                    )}
-                  />
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </motion.header>
-
-      {/* Mobile / tablet overlay menu */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-menu"
-            className="fixed inset-0 z-[95] flex flex-col justify-between bg-ink px-5 pb-10 pt-28 text-paper lg:hidden"
-            initial={{ clipPath: "inset(0 0 100% 0)" }}
-            animate={{ clipPath: "inset(0 0 0% 0)" }}
-            exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.7, ease: EASE }}
-          >
-            <nav className="flex flex-col gap-1" aria-label="Mobile">
-              {[...navLinks, { label: "Contact", href: "#contact" }].map((link, i) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ y: 40, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.18 + i * 0.06, duration: 0.7, ease: EASE }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={() => {
-                      setOpen(false);
-                      handleNavigate();
-                    }}
-                    className="block border-b border-paper/10 py-4 text-[2.25rem] font-medium leading-none tracking-tight"
-                  >
-                    <span className="mr-3 align-super font-mono text-xs text-lime">
-                      0{i + 1}
-                    </span>
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-            </nav>
-
-            <motion.div
-              className="space-y-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-            >
-              <a
-                href={`mailto:${person.email}`}
-                className="block text-lg tracking-tight text-lime"
-              >
-                {person.email}
-              </a>
-              <p className="text-sm text-paper/50">
-                {person.location} · {person.timezoneLabel}
-              </p>
-            </motion.div>
-          </motion.div>
+    <header className="fixed inset-x-0 top-4 z-[100] flex justify-center px-3 sm:top-6">
+      <motion.nav
+        aria-label="Primary"
+        initial={{ y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: EASE }}
+        className={cn(
+          "relative w-full max-w-[50rem] rounded-full border border-white/5 text-white transition-[background-color,box-shadow,backdrop-filter] duration-500",
+          scrolled
+            ? "bg-[#1b1b1b]/80 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+            : "bg-black shadow-[0_18px_40px_-20px_rgba(0,0,0,0.45)]",
         )}
-      </AnimatePresence>
-    </>
-  );
-}
+      >
+        <div className="flex h-14 items-center gap-6 pl-2 pr-2">
+          <a
+            href="#top"
+            aria-label={`${person.name}, back to top`}
+            className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-[0.8125rem] font-bold tracking-tight text-white ring-2 ring-white/10 transition-transform duration-300 hover:scale-105"
+          >
+            {person.initials}
+          </a>
 
-function NavLink({
-  href,
-  children,
-  onClick,
-}: {
-  href: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      data-cursor="hover"
-      className="group relative overflow-hidden rounded-full px-4 py-2 text-sm text-ink/70 transition-colors hover:text-ink"
-    >
-      {/* Two stacked copies: the top slides out, the bottom slides in. */}
-      <span className="relative block overflow-hidden">
-        <span className="block transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full">
-          {children}
-        </span>
-        <span className="absolute inset-0 block translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0">
-          {children}
-        </span>
-      </span>
-    </Link>
+          <ul className="hidden flex-1 items-center gap-5 md:flex lg:gap-6">
+            {navLinks.map((link) => {
+              const isActive = active === link.href.slice(1);
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    aria-current={isActive ? "true" : undefined}
+                    className={cn(
+                      "relative block py-2 text-[0.6875rem] font-bold uppercase tracking-[0.06em] transition-colors duration-300",
+                      isActive ? "text-white" : "text-white/60 hover:text-white",
+                    )}
+                  >
+                    {link.label}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute inset-x-0 bottom-0 h-0.5 origin-left rounded-full bg-accent transition-transform duration-500 ease-out",
+                        isActive ? "scale-x-100" : "scale-x-0",
+                      )}
+                    />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
+          <a
+            href="#contact"
+            className="ml-auto hidden h-10 items-center rounded-full border border-white/20 px-5 text-[0.6875rem] font-bold uppercase tracking-[0.06em] text-white transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:inline-flex"
+          >
+            Hire me
+          </a>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            className="ml-auto inline-flex h-10 items-center gap-2 rounded-full border border-white/20 px-4 text-[0.6875rem] font-bold uppercase tracking-[0.06em] md:hidden"
+          >
+            <Icon name={open ? "close" : "menu"} size={16} />
+            {open ? "Close" : "Menu"}
+          </button>
+        </div>
+
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              id="mobile-menu"
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.35, ease: EASE }}
+              className="absolute inset-x-0 top-[calc(100%+0.5rem)] origin-top rounded-[1.75rem] border border-white/10 bg-black p-3 shadow-[0_24px_48px_-20px_rgba(0,0,0,0.6)] md:hidden"
+            >
+              <ul className="flex flex-col">
+                {navLinks.map((link) => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center justify-between rounded-2xl px-4 py-3.5 text-sm font-semibold uppercase tracking-[0.06em] transition-colors",
+                        active === link.href.slice(1)
+                          ? "bg-white/10 text-white"
+                          : "text-white/70 hover:bg-white/5 hover:text-white",
+                      )}
+                    >
+                      {link.label}
+                      <Icon name="arrowRight" size={16} className="text-accent-glow" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="#contact"
+                onClick={() => setOpen(false)}
+                className="mt-2 flex h-12 items-center justify-center rounded-full bg-accent text-xs font-bold uppercase tracking-[0.08em] text-white"
+              >
+                Hire me
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+    </header>
   );
 }

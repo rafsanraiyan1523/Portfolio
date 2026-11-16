@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactLenis, type LenisRef } from "lenis/react";
-import { cancelFrame, frame } from "motion/react";
+import { MotionConfig, cancelFrame, frame } from "motion/react";
 import { useEffect, useRef } from "react";
 
 /**
@@ -31,9 +31,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         smoothWheel: true,
         wheelMultiplier: 1,
         touchMultiplier: 1.6,
+        // In-page links glide through Lenis. Lenis already honours each
+        // section's scroll-margin-top (globals.css), so no extra offset here.
+        anchors: true,
       }}
     >
-      {children}
+      <MotionConfig reducedMotion="user">{children}</MotionConfig>
     </ReactLenis>
   );
 }

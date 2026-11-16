@@ -1,69 +1,48 @@
-"use client";
+import type { ReactNode } from "react";
 
-import { motion, useReducedMotion } from "motion/react";
-
-import RevealText, { type Segment } from "@/components/ui/RevealText";
+import Reveal from "@/components/ui/Reveal";
 import { cn } from "@/lib/utils";
 
 /**
- * Standard section header: a monospace eyebrow with a rule that draws itself,
- * followed by the masked headline reveal.
+ * Centered section header in the studio style: a heavy headline that carries
+ * the section on its own, with an optional muted line beneath it.
  */
 export default function SectionHeading({
-  eyebrow,
-  segments,
+  title,
+  intro,
   className,
-  headingClassName,
-  align = "left",
   dark = false,
-  as = "h2",
+  align = "center",
+  id,
 }: {
-  eyebrow: string;
-  segments: readonly Segment[];
+  title: ReactNode;
+  intro?: ReactNode;
   className?: string;
-  headingClassName?: string;
-  align?: "left" | "center";
   dark?: boolean;
-  as?: "h1" | "h2" | "h3";
+  align?: "center" | "left";
+  id?: string;
 }) {
-  const reduced = useReducedMotion();
-
   return (
-    <div className={cn(align === "center" && "text-center", className)}>
-      <div
-        className={cn(
-          "mb-6 flex items-center gap-4 md:mb-9",
-          align === "center" && "justify-center",
-        )}
-      >
-        <motion.span
-          className={cn("size-1.5 rounded-full", dark ? "bg-lime" : "bg-ink")}
-          initial={reduced ? undefined : { scale: 0 }}
-          whileInView={reduced ? undefined : { scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        />
-        <span className={cn("eyebrow", dark ? "text-paper/55" : "text-muted")}>
-          {eyebrow}
-        </span>
-        <motion.span
+    <Reveal
+      className={cn(
+        align === "center" ? "mx-auto max-w-4xl text-center" : "max-w-3xl",
+        className,
+      )}
+    >
+      <h2 id={id} className={cn("display-lg", dark ? "text-white" : "text-ink")}>
+        {title}
+      </h2>
+      {intro ? (
+        <p
           className={cn(
-            "h-px flex-1 origin-left",
-            dark ? "bg-paper/20" : "bg-ink/15",
-            align === "center" && "max-w-24",
+            "mt-5 text-base leading-relaxed sm:text-lg",
+            align === "center" && "mx-auto max-w-2xl",
+            dark ? "text-white/65" : "text-muted",
           )}
-          initial={reduced ? undefined : { scaleX: 0 }}
-          whileInView={reduced ? undefined : { scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-        />
-      </div>
-
-      <RevealText
-        as={as}
-        segments={segments}
-        className={cn("display-lg max-w-5xl", headingClassName)}
-      />
-    </div>
+        >
+          {intro}
+        </p>
+      ) : null}
+    </Reveal>
   );
 }

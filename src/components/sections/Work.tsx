@@ -1,278 +1,168 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
-import Link from "next/link";
-import { useRef } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
+import { useState } from "react";
 
-import { DotPattern } from "@/components/ui/dot-pattern";
-import ProjectScreenshot from "@/components/ui/ProjectScreenshot";
-import Reveal from "@/components/ui/Reveal";
+import Icon from "@/components/ui/Icon";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { projects, type Project } from "@/lib/data";
+import { cn } from "@/lib/utils";
+import { keepHyphens } from "@/lib/typography";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const groups = ["Web & E-commerce", "Software", "Tools"] as const;
+type Filter = "All" | (typeof groups)[number];
 
-/**
- * Selected work as a stacking deck.
- *
- * Each card pins to the viewport while the next one slides over it; the card
- * underneath scales down slightly so the stack reads as depth rather than a
- * plain slideshow.
- */
 export default function Work() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const [filter, setFilter] = useState<Filter>("All");
+  const shown = filter === "All" ? projects : projects.filter((p) => p.group === filter);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  const chips: { label: Filter; count: number }[] = [
+    { label: "All", count: projects.length },
+    ...groups.map((g) => ({ label: g, count: projects.filter((p) => p.group === g).length })),
+  ];
 
   return (
-    <section id="work" className="section-t grain relative bg-paper-2">
-      <DotPattern className="-z-10 fill-ink/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
-      <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
-          <div>
-            <SectionHeading
-              eyebrow="Selected work"
-              segments={[
-                { text: "Eight builds," },
-                { text: "shipped", className: "accent-serif" },
-                { text: "and measured." },
-              ]}
-            />
-          </div>
-          <Reveal delay={0.15} className="lg:pt-20">
-            <p className="text-base leading-relaxed text-muted md:text-lg">
-              From a live production storefront to hand-rolled Laravel systems.
-              Each one shipped end to end — schema, interface, deployment.
-            </p>
-          </Reveal>
-        </div>
-      </div>
+    <section id="work" aria-labelledby="work-title" className="section-y">
+      <div className="shell">
+        <SectionHeading
+          id="work-title"
+          title="Selected work."
+          intro="Pick a category to jump straight to the work you care about."
+        />
 
-      <div ref={containerRef} className="relative mt-flow">
-        {projects.map((project, i) => (
-          <StackCard
-            key={project.id}
-            project={project}
-            index={i}
-            total={projects.length}
-            progress={scrollYProgress}
-            reduced={Boolean(reduced)}
-          />
-        ))}
+        <div
+          role="group"
+          aria-label="Filter projects"
+          className="mx-auto mt-10 flex max-w-3xl flex-wrap justify-center gap-2.5 sm:mt-12 sm:gap-3"
+        >
+          {chips.map((chip) => {
+            const active = filter === chip.label;
+            return (
+              <button
+                key={chip.label}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(chip.label)}
+                className={cn(
+                  "inline-flex h-11 items-center gap-2 rounded-full border px-5 text-sm font-medium transition-all duration-300",
+                  active
+                    ? "border-black bg-black text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.6)]"
+                    : "border-line-strong bg-card text-muted hover:border-ink hover:text-ink",
+                )}
+              >
+                {chip.label}
+                <span className={cn("text-xs tabular-nums", active ? "text-white/70" : "text-muted")}>
+                  {chip.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <motion.ul layout className="mx-auto mt-12 grid max-w-[72rem] gap-6 sm:mt-16 md:grid-cols-2 lg:gap-7">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {shown.map((project, i) => (
+              <motion.li
+                key={project.id}
+                layout
+                // An odd card out on the last row sits centred, not stranded on the left.
+                className={cn(
+                  shown.length % 2 === 1 &&
+                    i === shown.length - 1 &&
+                    "md:col-span-2 md:mx-auto md:w-[calc(50%-0.75rem)] lg:w-[calc(50%-0.875rem)]",
+                )}
+                initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.6, delay: i * 0.04, ease: EASE }}
+              >
+                <ProjectCard project={project} priority={i < 2} />
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </motion.ul>
       </div>
     </section>
   );
 }
 
-function StackCard({
-  project,
-  index,
-  total,
-  progress,
-  reduced,
-}: {
-  project: Project;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-  reduced: boolean;
-}) {
-  // Cards further down the stack end up slightly smaller.
-  const targetScale = 1 - (total - index) * 0.028;
-  const start = index / total;
-
-  const scale = useTransform(progress, [start, 1], [1, targetScale]);
-  // Cards recede by darkening under an overlay — never by going transparent,
-  // which would let the cards beneath show through the stack. Dimming only
-  // begins once the *next* card has started sliding over this one.
-  // Motion compiles scroll-linked ranges to native scroll-timeline offsets,
-  // which must stay inside [0,1] — so clamp. The last card is never covered,
-  // so its overlay is skipped entirely (see `isLast` below).
-  const isLast = index === total - 1;
-  const dimStart = Math.min((index + 1) / total, 0.98);
-  const dimEnd = Math.min((index + 1.7) / total, 0.99);
-  const dim = useTransform(progress, [dimStart, dimEnd], [0, 0.4]);
-
-  const isLight = project.ink !== "#ffffff";
-  const baseBackground = isLight ? "#f4f2ec" : "#0c0c0e";
+function ProjectCard({ project, priority }: { project: Project; priority?: boolean }) {
+  const primary = project.links?.[0];
+  const [w, h] = project.imageSize;
 
   return (
-    <div
-      className="sticky top-0 flex min-h-[100svh] items-center justify-center px-4 py-6 md:px-10 md:py-10"
-      style={{ paddingTop: `calc(2.5rem + ${index * 14}px)` }}
-    >
-      <motion.article
+    <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-line bg-card transition-shadow duration-500 hover:shadow-[0_30px_60px_-34px_rgba(27,27,27,0.45)]">
+      {/* Every screenshot shows whole: it keeps its own shape and sits centred
+          on a tint of the project's accent, so nothing is ever cropped. */}
+      <div
+        className="relative aspect-[4/3] overflow-hidden"
         style={{
-          background: baseBackground,
-          ...(reduced
-            ? {}
-            : { scale, transformOrigin: "top center", willChange: "transform" }),
+          background: `radial-gradient(120% 90% at 50% 0%, ${project.accent}2e, ${project.accent}0f 55%, #f1efe9 100%)`,
         }}
-        className="relative w-full max-w-[84rem] overflow-hidden rounded-[1.5rem] border border-ink/10 shadow-[0_30px_90px_-40px_rgba(12,12,14,0.45)] md:rounded-[2rem]"
       >
-        {/* Accent wash bled in from the top-left corner */}
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(120% 90% at 0% 0%, ${project.accent}${
-              isLight ? "38" : "30"
-            }, transparent 62%)`,
-          }}
-        />
-
-        {/* Recede overlay — darkens this card as the next one slides over it */}
-        {!reduced && !isLast && (
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 z-20 bg-ink"
-            style={{ opacity: dim }}
+        <div className="absolute inset-0 flex items-center justify-center px-5 pb-5 pt-14 sm:px-8 sm:pb-8 sm:pt-16">
+          <Image
+            src={project.image}
+            alt={`${project.name} screenshot`}
+            width={w}
+            height={h}
+            priority={priority}
+            sizes="(max-width: 768px) 90vw, 34rem"
+            className="h-auto max-h-full w-auto max-w-full rounded-xl shadow-[0_20px_40px_-18px_rgba(27,27,27,0.4)] ring-1 ring-black/5 transition-transform duration-[1.2s] ease-out group-hover:-translate-y-1.5 group-hover:scale-[1.015]"
           />
-        )}
-
-        <div
-          className={`relative z-10 grid gap-4 p-4 md:gap-12 md:p-10 lg:grid-cols-2 lg:items-center lg:p-14 ${
-            isLight ? "text-ink" : "on-dark text-paper"
-          }`}
-        >
-          {/* ---------- Copy ---------- */}
-          <div className="order-2 lg:order-1">
-            <div className="flex flex-wrap items-center gap-3">
-              <span
-                className="rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink"
-                style={{ background: project.accent }}
-              >
-                {project.category}
-              </span>
-              <span
-                className={`font-mono text-[11px] tracking-[0.14em] ${
-                  isLight ? "text-muted" : "text-paper/45"
-                }`}
-              >
-                {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-              </span>
-            </div>
-
-            <h3 className="display-md mt-3 md:mt-6">{project.name}</h3>
-
-            <p
-              className={`mt-1.5 text-base tracking-tight md:mt-3 md:text-xl ${
-                isLight ? "text-ink/70" : "text-paper/70"
-              }`}
-            >
-              {project.tagline}
-            </p>
-
-            <p
-              className={`mt-2 line-clamp-3 max-w-lg text-sm leading-relaxed md:mt-5 md:line-clamp-none md:text-base ${
-                isLight ? "text-muted" : "text-paper/50"
-              }`}
-            >
-              {project.description}
-            </p>
-
-            {/* Results */}
-            <dl
-              className={`mt-4 grid grid-cols-3 gap-4 border-t pt-4 md:mt-8 md:pt-6 ${
-                isLight ? "border-ink/12" : "border-paper/15"
-              }`}
-            >
-              {project.results.map((result) => (
-                <div key={result.label}>
-                  <dt className="sr-only">{result.label}</dt>
-                  <dd>
-                    <span className="block text-lg font-medium tracking-tight md:text-3xl">
-                      {result.value}
-                    </span>
-                    <span
-                      className={`mt-1.5 block font-mono text-[10px] uppercase tracking-[0.12em] ${
-                        isLight ? "text-muted" : "text-paper/45"
-                      }`}
-                    >
-                      {result.label}
-                    </span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-
-            {/* Stack + links */}
-            <div className="mt-4 flex flex-wrap items-center gap-2 md:mt-7">
-              {project.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className={`rounded-full border px-3 py-1.5 text-xs ${
-                    isLight
-                      ? "border-ink/15 text-ink/65"
-                      : "border-paper/20 text-paper/65"
-                  }`}
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {project.links?.length ? (
-              <div className="mt-4 flex flex-wrap gap-5 md:mt-7">
-                {project.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-cursor="label"
-                    data-cursor-label="Open"
-                    className={`link-underline inline-flex items-center gap-2 text-sm font-medium ${
-                      isLight ? "text-ink" : "text-lime"
-                    }`}
-                  >
-                    {link.label}
-                    <svg viewBox="0 0 16 16" fill="none" className="size-3.5">
-                      <path
-                        d="M3 13L13 3M13 3H5.5M13 3V10.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          {/* ---------- Visual ----------
-              Comes first on mobile: the sticky card is capped to 100svh and
-              clips anything past it, so with a full copy block the image
-              — the actual point of a "selected work" card — never fit.
-              Leading with it means it's the one thing that's never clipped. */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.9, ease: EASE }}
-            className="order-1 lg:order-2"
-          >
-            <ProjectScreenshot
-              src={project.image}
-              size={project.imageSize}
-              alt={`${project.name} interface`}
-              priority={index < 2}
-            />
-          </motion.div>
         </div>
-      </motion.article>
-    </div>
+        <span className="label absolute left-3 top-3 rounded-full bg-card/95 px-3 py-1.5 text-ink shadow-sm backdrop-blur-sm">
+          {project.group}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col p-6 sm:p-7">
+        <p className="label text-muted">{project.category}</p>
+        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.02em] text-ink">{project.name}</h3>
+        <span aria-hidden className="mt-4 block h-px w-10 bg-line-strong" />
+        <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted">{keepHyphens(project.description)}</p>
+
+        <dl className="mt-6 grid grid-cols-3 gap-2">
+          {project.results.map((r) => (
+            <div key={r.label} className="flex flex-col-reverse rounded-xl bg-paper-2/70 px-3 py-3">
+              <dt className="mt-1 text-xs leading-snug text-muted">{r.label}</dt>
+              <dd className="text-base font-bold tracking-tight text-ink">{r.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Stack">
+          {project.stack.map((tech) => (
+            <li key={tech} className="rounded-full border border-line px-3 py-1 text-xs text-ink/75">
+              {tech}
+            </li>
+          ))}
+        </ul>
+
+        {primary ? (
+          <div className="mt-auto flex flex-wrap gap-5 pt-6">
+            {project.links?.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group/link inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-accent-ink"
+              >
+                {link.label}
+                <span className="sr-only"> for {project.name}</span>
+                <Icon
+                  name="arrowRight"
+                  size={16}
+                  className="transition-transform duration-300 group-hover/link:translate-x-1"
+                />
+              </a>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </article>
   );
 }

@@ -1,125 +1,40 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "motion/react";
-import type { ElementType, ReactNode } from "react";
+import { motion } from "motion/react";
+import type { ReactNode } from "react";
+
+import { usePrefersReducedMotion } from "@/lib/hooks";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-type RevealProps = {
-  children: ReactNode;
-  className?: string;
-  /** Seconds to wait before this element animates. */
-  delay?: number;
-  /** Travel distance in px. */
-  y?: number;
-  as?: ElementType;
-  /** How much of the element must be visible before it fires. */
-  amount?: number;
-  once?: boolean;
-};
-
-/** Fade + rise, triggered once when the element scrolls into view. */
+/**
+ * Rise + un-blur, once, when the element scrolls into view. It starts
+ * partly visible so nothing ever reads as missing while it waits.
+ */
 export default function Reveal({
   children,
   className,
   delay = 0,
-  y = 28,
-  as = "div",
-  amount = 0.35,
-  once = true,
-}: RevealProps) {
-  const reduced = useReducedMotion();
-  const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
-
-  if (reduced) {
-    const Tag = as as ElementType;
-    return <Tag className={className}>{children}</Tag>;
-  }
-
-  return (
-    <MotionTag
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, amount }}
-      transition={{ duration: 0.85, delay, ease: EASE }}
-    >
-      {children}
-    </MotionTag>
-  );
-}
-
-/** Container that staggers its <RevealItem> children. */
-export function RevealGroup({
-  children,
-  className,
-  stagger = 0.08,
-  delay = 0,
+  y = 24,
   amount = 0.25,
-  as = "div",
 }: {
   children: ReactNode;
   className?: string;
-  stagger?: number;
   delay?: number;
+  y?: number;
   amount?: number;
-  as?: ElementType;
 }) {
-  const reduced = useReducedMotion();
-  const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
-
-  const variants: Variants = {
-    hidden: {},
-    show: {
-      transition: {
-        staggerChildren: reduced ? 0 : stagger,
-        delayChildren: reduced ? 0 : delay,
-      },
-    },
-  };
+  const reduced = usePrefersReducedMotion();
 
   return (
-    <MotionTag
+    <motion.div
       className={className}
-      variants={variants}
-      initial="hidden"
-      whileInView="show"
+      initial={{ opacity: 0.25, y, filter: "blur(6px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, amount }}
+      transition={reduced ? { duration: 0 } : { duration: 0.9, delay, ease: EASE }}
     >
       {children}
-    </MotionTag>
-  );
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 26 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: EASE },
-  },
-};
-
-export function RevealItem({
-  children,
-  className,
-  as = "div",
-}: {
-  children: ReactNode;
-  className?: string;
-  as?: ElementType;
-}) {
-  const reduced = useReducedMotion();
-  const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
-
-  if (reduced) {
-    const Tag = as as ElementType;
-    return <Tag className={className}>{children}</Tag>;
-  }
-
-  return (
-    <MotionTag className={className} variants={itemVariants}>
-      {children}
-    </MotionTag>
+    </motion.div>
   );
 }

@@ -10,20 +10,25 @@ export const person = {
   role: "Full-Stack Web Developer",
   roles: [
     "Full-Stack Web Developer",
+    "IT Officer",
     "E-commerce Specialist",
     "SEO & Growth",
   ],
-  title: "Full Stack Developer & Head of E-Commerce",
+  title: "IT Officer & Full-Stack Developer",
   email: "rafsanraiyan00@gmail.com",
-  phone: "+880 1704595286",
-  phoneHref: "+8801704595286",
+  phone: "+880 1601415105",
+  phoneHref: "+8801601415105",
+  /** WhatsApp in wa.me format: country code, no leading 0. */
   whatsapp: "8801704595286",
+  whatsappDisplay: "01704595286",
   location: "Dhaka, Bangladesh",
   timezone: "Asia/Dhaka",
   timezoneLabel: "UTC+6",
-  availability: "Open to remote, on-site & relocation",
+  availability: "Open to remote & international roles",
   yearsExperience: "3+",
   photo: "/rafsan-portrait-2.jpg",
+  /** The portrait's real pixel size, so it renders whole at its own 3:4 shape. */
+  photoSize: [864, 1153] as const,
   /** Optional short loop for the retro-TV hero screen. Drop an .mp4 into /public and point this at it. */
   heroVideo: "" as string,
   socials: [
@@ -34,10 +39,10 @@ export const person = {
 } as const;
 
 export const summary =
-  "Full-stack developer and e-commerce manager with 3+ years of experience shipping production platforms — from full-stack engineering in Next.js, Laravel and Django to e-commerce ownership across WordPress/WooCommerce and Shopify — with measurable growth outcomes throughout.";
+  "IT Officer at the Bangladesh Association of Pharmaceutical Industries (BAPI) and full-stack developer with 3+ years shipping production e-commerce platforms on WooCommerce and Shopify, backed by full-stack engineering in Laravel, React, Next.js and Django. Previously owned e-commerce end to end, with measurable growth outcomes throughout.";
 
 export const summaryLong =
-  "A full-stack builder at the core, now leading e-commerce operations end-to-end — from writing the code to running the department — while driving 65% organic traffic growth, 30% conversion rate uplift, and 45% Core Web Vitals improvement at a live production store. I combine hands-on full-stack development with technical SEO, CRO, and growth strategy to own the full cycle from deployment to revenue impact.";
+  "IT Officer at BAPI, building the association's new website and digitalising its member services, records and operations. Before that I owned e-commerce end to end at Go Go Gorgeous, writing the code and running the department, and drove 65% organic traffic growth, a 30% conversion rate uplift and a 45% Core Web Vitals improvement at a live production store. I combine full-stack development with technical SEO, CRO and growth strategy, from deployment through to revenue impact.";
 
 /* ------------------------------------------------------------------ */
 /*  Impact metrics                                                     */
@@ -128,6 +133,8 @@ export type Project = {
   id: string;
   name: string;
   category: string;
+  /** Filter chip this project sits under in the Work section. */
+  group: "Web & E-commerce" | "Software" | "Tools";
   tagline: string;
   description: string;
   stack: readonly string[];
@@ -146,10 +153,11 @@ export const projects: readonly Project[] = [
   {
     id: "leadradar",
     name: "LeadRadar",
+    group: "Software",
     category: "AI-powered lead discovery platform",
     tagline: "Search a market. Get a ranked, audited pipeline.",
     description:
-      "An AI-powered lead generation platform that discovers businesses, analyzes their online presence, and identifies growth opportunities — from a business-type search straight through to a scored, ready-to-work pipeline.",
+      "An AI-powered lead generation platform that discovers businesses, analyses their online presence and identifies growth opportunities, from a business-type search straight through to a scored, ready-to-work pipeline.",
     stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma"],
     results: [
       { value: "AI", label: "Opportunity scoring" },
@@ -158,44 +166,21 @@ export const projects: readonly Project[] = [
     ],
     accent: "#4F5BF5",
     ink: "#ffffff",
-    links: [
-      { label: "Source", href: "https://github.com/rafsanraiyan1523/LeadRadar" },
-    ],
+    links: [{ label: "Source", href: "https://github.com/rafsanraiyan1523/LeadRadar" }],
     image: "/projects/leadradar.png",
     imageSize: [3800, 1800],
   },
   {
-    id: "carvia",
-    name: "Carvia",
-    category: "AI-powered car rental platform",
-    tagline: "Describe a trip in plain language. Get real, available cars back.",
-    description:
-      "A full-stack car rental platform with a customer booking site, an admin dashboard, an AI vehicle-recommendation assistant, and a real booking-confirmation automation pipeline — built on a production TypeScript monorepo backed by PostgreSQL.",
-    stack: ["React", "TypeScript", "Express", "PostgreSQL"],
-    results: [
-      { value: "AI", label: "Trip-to-vehicle matching" },
-      { value: "56", label: "Backend tests, real DB" },
-      { value: "Auto", label: "Booking confirmation" },
-    ],
-    accent: "#F97316",
-    ink: "#ffffff",
-    links: [
-      { label: "Live site", href: "https://carvia-omega.vercel.app" },
-      { label: "Source", href: "https://github.com/rafsanraiyan1523/carvia" },
-    ],
-    image: "/projects/carvia.png",
-    imageSize: [1440, 830],
-  },
-  {
     id: "brand-extractor",
     name: "Brand Extractor",
+    group: "Tools",
     category: "Client-side brand analysis tool",
     tagline: "Paste a URL. Get the whole brand system.",
     description:
-      "A client-side tool that scrapes a live site for its identity, palette, typography, tech signals and voice — then exports the results as JSON, CSS or plain text, with a history panel to revisit past extractions.",
-    stack: ["React", "Vite", "Tailwind CSS", "Django"],
+      "A client-side tool that scrapes any live URL in the browser for name, logo, colour palette, typography, voice and social links, then exports the brand kit as JSON, CSS or plain text.",
+    stack: ["React 19", "Vite", "Tailwind CSS", "Django"],
     results: [
-      { value: "5", label: "Brand signals extracted" },
+      { value: "6", label: "Brand signals extracted" },
       { value: "3", label: "Export formats" },
       { value: "Live", label: "Extraction history" },
     ],
@@ -210,11 +195,12 @@ export const projects: readonly Project[] = [
   {
     id: "assignment-hub",
     name: "Assignment Hub",
+    group: "Software",
     category: "Full-stack assignment management system",
     tagline: "Assignments and submissions, organized in one place",
     description:
       "A clean-architecture LMS for schools — role-based workspaces for admins, teachers and students, with a draft-to-publish workflow and deadlines, marks and feedback enforced server-side, not just in the UI.",
-    stack: ["Next.js", "ASP.NET Core", "PostgreSQL", "TypeScript"],
+    stack: ["Next.js", "ASP.NET", "TypeScript"],
     results: [
       { value: "3", label: "Role-based workspaces" },
       { value: "RBAC", label: "Server-enforced access" },
@@ -231,6 +217,7 @@ export const projects: readonly Project[] = [
   {
     id: "deshi-bideshi",
     name: "Deshi-Bideshi Kitchen",
+    group: "Web & E-commerce",
     category: "Full-stack food platform",
     tagline: "SSR food ordering, scoring 95+ on Lighthouse",
     description:
@@ -250,6 +237,7 @@ export const projects: readonly Project[] = [
   {
     id: "r3-studio",
     name: "R3 Studio",
+    group: "Web & E-commerce",
     category: "Digital growth agency platform",
     tagline: "A growth agency platform that scaled to 20+ delivered projects",
     description:
@@ -263,12 +251,13 @@ export const projects: readonly Project[] = [
     accent: "#7C6BFF",
     ink: "#ffffff",
     links: [{ label: "Live site", href: "https://r3-studio.vercel.app/" }],
-    image: "/projects/r3-studio.png",
-    imageSize: [767, 856],
+    image: "/projects/r3-studio-live.png",
+    imageSize: [1440, 1500],
   },
   {
     id: "e-lectronix",
     name: "E-LECTRONIX",
+    group: "Web & E-commerce",
     category: "Full-stack e-commerce store",
     tagline: "A complete store architecture, built from scratch",
     description:
@@ -288,11 +277,12 @@ export const projects: readonly Project[] = [
   {
     id: "post-office",
     name: "Post Office Management",
+    group: "Software",
     category: "Operations management system",
     tagline: "Postal operations, streamlined into one workflow",
     description:
       "A postal operations system featuring role-based login, file management and transaction visualisations designed to streamline daily branch workflows.",
-    stack: ["PHP", "MySQL", "Transaction reports"],
+    stack: ["JavaScript", "MySQL"],
     results: [
       { value: "RBAC", label: "Secure login" },
       { value: "Files", label: "Document mgmt" },
@@ -312,13 +302,28 @@ export const projects: readonly Project[] = [
 
 export const experience = [
   {
-    company: "Go Go Gorgeous",
-    url: "https://gogogorgeous.com.bd/",
-    role: "Full Stack Developer & Head of E-Commerce",
-    period: "01/2025 — Present",
-    start: "2025",
+    company: "Bangladesh Association of Pharmaceutical Industries (BAPI)",
+    url: "",
+    role: "IT Officer",
+    period: "10/2026 — Present",
+    start: "2026",
     location: "Dhaka, Bangladesh",
     current: true,
+    focus: ["New website", "Digitalisation", "Member services", "IT operations"],
+    highlights: [
+      "Building the association's new website from the ground up, covering design, development and deployment.",
+      "Leading the digitalisation of the association's systems, replacing manual, paper-based workflows for member services, records and operations with web-based tools.",
+      "Overseeing the secretariat's day-to-day IT, including network, hardware and user support.",
+    ],
+  },
+  {
+    company: "Go Go Gorgeous",
+    url: "https://gogogorgeous.com.bd/",
+    role: "Full-Stack Developer & Head of E-Commerce",
+    period: "01/2025 — 09/2026",
+    start: "2025",
+    location: "Dhaka, Bangladesh",
+    current: false,
     highlights: [
       "Managed and optimised the WooCommerce platform, improving user experience and contributing to a 30% increase in conversion rate through website enhancements and checkout optimisation.",
       "Boosted Core Web Vitals scores by 45% (LCP, CLS, INP) via asset minification, lazy loading, CDN setup and critical CSS delivery — cutting bounce rate by 18%.",
@@ -405,45 +410,35 @@ export const process = [
 export const skills = [
   {
     group: "Languages",
-    items: ["PHP", "JavaScript ES6+", "Python", "HTML5", "CSS3", "SQL"],
+    items: ["JavaScript (ES6+)", "TypeScript", "PHP", "Python", "SQL", "HTML5", "CSS3"],
   },
   {
     group: "Front-End",
-    items: ["Next.js", "React", "Tailwind CSS", "Bootstrap", "Responsive Design"],
+    items: ["React", "Next.js", "Vite", "Tailwind CSS", "Bootstrap", "SSR", "Responsive UI"],
   },
   {
     group: "Back-End",
-    items: ["Laravel", "Django", "REST API", "JWT", "OAuth", "Eloquent ORM", "Composer", "Webhooks"],
+    items: ["Laravel", "Django", "ASP.NET", "REST APIs", "JWT & OAuth", "Eloquent ORM", "Webhooks", "Payment Integration"],
   },
   {
-    group: "WordPress & Shopify",
-    items: ["Custom Theme Design", "Plugin Development", "WooCommerce", "Shopify", "Elementor"],
+    group: "E-Commerce",
+    items: ["WooCommerce", "Shopify", "WordPress Theme & Plugin Development", "Checkout & CRO", "Merchandising"],
   },
   {
-    group: "Database",
-    items: ["MySQL", "Supabase", "Query Optimization", "Indexing", "Migrations", "Relational Design"],
+    group: "Databases",
+    items: ["MySQL", "Supabase / PostgreSQL", "Schema Design", "Migrations", "Indexing", "Query Optimisation"],
   },
   {
     group: "SEO & Growth",
-    items: ["Technical SEO", "On-Page SEO", "Core Web Vitals", "Schema Markup", "RankMath", "YouTube SEO", "CRO", "A/B Testing"],
+    items: ["Technical SEO", "On-Page SEO", "Core Web Vitals", "Schema Markup", "Site Speed Optimisation", "RankMath"],
   },
   {
     group: "Analytics",
-    items: ["Google Analytics 4", "Search Console", "Google Tag Manager", "Funnel Analysis", "Power BI", "Apps Script"],
+    items: ["Google Analytics 4", "Search Console", "Tag Manager", "Funnel & Conversion Analysis", "Power BI", "Apps Script"],
   },
   {
-    group: "DevOps & Tools",
-    items: ["Git", "GitHub", "Vercel", "Linux CLI", "cPanel", "VS Code", "Figma", "Canva", "Slack"],
-  },
-  {
-    group: "Soft Skills",
-    items: [
-      "Cross-functional Collaboration",
-      "Async Remote Work",
-      "Stakeholder Communication",
-      "Data-Driven Decision Making",
-      "Agile/Scrum",
-    ],
+    group: "Tools & Practices",
+    items: ["Git", "GitHub", "Vercel", "cPanel", "Figma", "Agile Delivery", "Async Remote Collaboration"],
   },
 ] as const;
 
@@ -454,6 +449,7 @@ export const stackMarquee = [
   "TypeScript",
   "Laravel",
   "Django",
+  "ASP.NET",
   "PHP",
   "Python",
   "Tailwind CSS",
@@ -541,7 +537,7 @@ export const faqs = [
   },
   {
     q: "You lead e-commerce and write code — how does that work?",
-    a: "It’s the same job from two angles. I run the department — operations, campaigns, cross-team coordination — and I’m also the one shipping the theme changes, checkout optimisations and performance fixes. Nothing gets lost in translation between strategy and implementation.",
+    a: "It’s the same job from two angles. At Go Go Gorgeous I ran the department — operations, campaigns, cross-team coordination — and I was also the one shipping the theme changes, checkout optimisations and performance fixes. Now, as IT Officer at BAPI, I’m applying that same mix of hands-on engineering and operations to the association’s systems.",
   },
   {
     q: "Can you take on SEO and performance work on its own?",
@@ -562,9 +558,10 @@ export const faqs = [
 /* ------------------------------------------------------------------ */
 
 export const navLinks = [
-  { label: "Work", href: "#work" },
-  { label: "Services", href: "#services" },
-  { label: "Process", href: "#process" },
-  { label: "Experience", href: "#experience" },
+  { label: "Home", href: "#top" },
   { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Work", href: "#work" },
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
 ] as const;

@@ -1,31 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
 import SmoothScroll from "@/components/providers/SmoothScroll";
-import Cursor from "@/components/ui/Cursor";
-import Preloader from "@/components/ui/Preloader";
-import ScrollProgress from "@/components/ui/ScrollProgress";
-import ViewportFrame from "@/components/ui/ViewportFrame";
+import WhatsAppFab from "@/components/ui/WhatsAppFab";
 import { person, summary } from "@/lib/data";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -42,6 +26,7 @@ export const metadata: Metadata = {
   keywords: [
     "Rafsan Raiyan",
     "Full Stack Developer",
+    "IT Officer",
     "E-commerce Developer",
     "WooCommerce Developer",
     "Shopify Developer",
@@ -76,7 +61,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0c0c0e",
+  themeColor: "#faf9f5",
   colorScheme: "light",
 };
 
@@ -118,7 +103,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      className={poppins.variable}
       suppressHydrationWarning
     >
       <body className="antialiased" suppressHydrationWarning>
@@ -128,15 +113,12 @@ export default function RootLayout({
         />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-5 focus:top-5 focus:z-[200] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-paper"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-5 focus:top-5 focus:z-[200] focus:rounded-full focus:bg-black focus:px-5 focus:py-3 focus:text-sm focus:text-white"
         >
           Skip to content
         </a>
-        <Preloader />
-        <Cursor />
-        <ScrollProgress />
-        <ViewportFrame />
         <SmoothScroll>{children}</SmoothScroll>
+        <WhatsAppFab />
       </body>
     </html>
   );

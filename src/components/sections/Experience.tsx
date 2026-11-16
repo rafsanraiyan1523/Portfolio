@@ -1,180 +1,167 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
 import { useState } from "react";
 
-import { DotPattern } from "@/components/ui/dot-pattern";
+import Icon from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { experience } from "@/lib/data";
+import { experience, metrics, person } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { keepHyphens } from "@/lib/typography";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const VISIBLE = 2;
 
-/** Career timeline as accordion rows — the current role opens by default. */
 export default function Experience() {
-  const [open, setOpen] = useState<number>(0);
+  const current = experience.find((job) => job.current);
+  const headline = metrics[0];
+  const focus: readonly string[] = current && "focus" in current ? current.focus : [];
 
   return (
-    <section
-      id="experience"
-      className="section-y on-dark relative overflow-hidden bg-ink text-paper"
-    >
-      <DotPattern className="-z-10 fill-paper/[0.14] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]" />
-      <div className="container-x">
-        <div className="grid gap-10 lg:grid-cols-[1.618fr_1fr]">
-          <div>
-            <SectionHeading
-              dark
-              eyebrow="Experience"
-              headingClassName="text-paper"
-              segments={[
-                { text: "Three years," },
-                { text: "three", className: "accent-serif text-lime" },
-                { text: "very different seats." },
-              ]}
-            />
-          </div>
-          <Reveal delay={0.15} className="lg:pt-20">
-            <p className="text-base leading-relaxed text-paper/55 md:text-lg">
-              Intern to department head in under three years — engineering,
-              analytics and now owning a live commerce P&amp;L.
-            </p>
-          </Reveal>
-        </div>
+    <section id="experience" aria-labelledby="experience-title" className="section-y">
+      <div className="shell">
+        <SectionHeading
+          id="experience-title"
+          title="Where I have shipped."
+          intro="Four roles across e-commerce, data and engineering, each one feeding the next."
+        />
 
-        <div className="mt-16 border-t border-paper/15 md:mt-24">
-          {experience.map((job, i) => {
-            const isOpen = open === i;
+        <div className="mt-14 grid gap-10 sm:mt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 [&>*]:min-w-0">
+          {/* ---------------- Timeline ---------------- */}
+          <ol className="relative">
+            <span aria-hidden className="absolute bottom-8 left-5 top-8 w-px bg-line-strong" />
+            {experience.map((job, i) => (
+              <li key={job.company} className="relative pb-6 pl-16 last:pb-0">
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute left-0 top-5 grid size-10 place-items-center rounded-full text-[0.75rem] font-bold",
+                    job.current ? "bg-accent text-white ring-4 ring-accent-soft" : "bg-black text-white",
+                  )}
+                >
+                  ’{job.start.slice(2)}
+                </span>
+                <Reveal delay={i * 0.05}>
+                  <JobCard job={job} />
+                </Reveal>
+              </li>
+            ))}
+          </ol>
 
-            return (
-              <Reveal key={job.company} delay={i * 0.08} amount={0.15}>
-                <div className="border-b border-paper/15">
-                  <button
-                    type="button"
-                    onClick={() => setOpen(isOpen ? -1 : i)}
-                    aria-expanded={isOpen}
-                    data-cursor="hover"
-                    className="group flex w-full items-start gap-4 py-7 text-left md:gap-10 md:py-10"
-                  >
-                    <span className="mt-2 hidden font-mono text-[11px] tracking-[0.14em] text-paper/40 md:block md:w-40 md:shrink-0">
-                      {job.period}
+          {/* ---------------- Now panel ---------------- */}
+          {current ? (
+            <div>
+              <Reveal className="lg:sticky lg:top-28">
+                <div className="rounded-[2rem] bg-gradient-to-br from-sky to-sky-2 p-5 sm:p-8">
+                  <div className="flex items-center gap-3">
+                    <span className="grid size-9 place-items-center rounded-full bg-black text-[0.6875rem] font-bold text-white">
+                      {person.initials}
                     </span>
+                    <p className="text-[0.8125rem] font-bold uppercase tracking-[0.08em] text-ink">Right now</p>
+                    <span className="ml-auto inline-flex items-center gap-2 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-ink/70">
+                      <span className="relative flex size-2">
+                        <span className="absolute inset-0 animate-ping rounded-full bg-accent opacity-60" />
+                        <span className="relative size-2 rounded-full bg-accent" />
+                      </span>
+                      Live
+                    </span>
+                  </div>
 
-                    <div className="flex-1">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3
-                          className={cn(
-                            "display-sm transition-colors duration-500",
-                            isOpen ? "text-lime" : "text-paper group-hover:text-lime",
-                          )}
-                        >
-                          {job.company}
-                        </h3>
-                        {job.current && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-lime/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-lime">
-                            <span className="size-1.5 animate-pulse rounded-full bg-lime" />
-                            Current
-                          </span>
-                        )}
-                      </div>
+                  <div className="mt-6 rounded-2xl bg-white p-5 shadow-[0_18px_40px_-26px_rgba(27,40,80,0.45)] sm:p-6">
+                    <p className="label text-muted">Current role</p>
+                    <p className="mt-2.5 text-lg font-semibold leading-snug text-ink">
+                      {current.role} at {current.company}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted">{keepHyphens(current.highlights[0])}</p>
+                  </div>
 
-                      <p className="mt-2 text-sm text-paper/60 md:text-base">
-                        {job.role}
-                      </p>
-                      <p className="mt-1 font-mono text-[11px] tracking-[0.12em] text-paper/35 md:hidden">
-                        {job.period}
-                      </p>
+                  <ul className="mt-3 grid grid-cols-2 gap-3">
+                    {focus.map((item) => (
+                      <li key={item} className="rounded-2xl bg-white/70 px-4 py-4">
+                        <Icon name="check" size={16} className="text-accent-ink" />
+                        <p className="mt-2 text-sm font-semibold text-ink">{item}</p>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-10 rounded-2xl bg-ink p-5 text-white sm:mt-16">
+                    <div className="flex items-center justify-between">
+                      <p className="label text-white/70">Last role, best result</p>
+                      <Icon name="trend" size={16} className="text-accent-glow" />
                     </div>
-
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "mt-1.5 grid size-9 shrink-0 place-items-center rounded-full border transition-all duration-500 md:size-11",
-                        isOpen
-                          ? "rotate-180 border-lime text-lime"
-                          : "border-paper/25 text-paper/70",
-                      )}
+                    <div
+                      className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10"
+                      role="img"
+                      aria-label={`${headline.value}${headline.suffix} ${headline.label.toLowerCase()}`}
                     >
-                      <svg viewBox="0 0 16 16" fill="none" className="size-4">
-                        <path
-                          d="M4 6l4 4 4-4"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.55, ease: EASE }}
-                        className="overflow-hidden"
-                      >
-                        <div className="pb-10 md:pl-[12.5rem]">
-                          <ul className="space-y-4">
-                            {job.highlights.map((point, pi) => (
-                              <motion.li
-                                key={point}
-                                initial={{ opacity: 0, x: -12 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{
-                                  delay: 0.1 + pi * 0.06,
-                                  duration: 0.5,
-                                  ease: EASE,
-                                }}
-                                className="flex gap-4 text-sm leading-relaxed text-paper/60 md:text-base"
-                              >
-                                <span
-                                  aria-hidden
-                                  className="mt-2 block size-1.5 shrink-0 rounded-full bg-lime"
-                                />
-                                {point}
-                              </motion.li>
-                            ))}
-                          </ul>
-
-                          <div className="mt-7 flex flex-wrap items-center gap-6 text-sm">
-                            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-paper/35">
-                              {job.location}
-                            </span>
-                            <Link
-                              href={job.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              data-cursor="label"
-                              data-cursor-label="Visit"
-                              className="link-underline inline-flex items-center gap-2 font-medium text-lime"
-                            >
-                              {job.company}
-                              <svg viewBox="0 0 16 16" fill="none" className="size-3.5">
-                                <path
-                                  d="M3 13L13 3M13 3H5.5M13 3V10.5"
-                                  stroke="currentColor"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </Link>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-accent-ink to-accent-glow"
+                        style={{ width: `${headline.value}%` }}
+                      />
+                    </div>
+                    <p className="mt-3 text-xs text-white/75">
+                      +{headline.value}
+                      {headline.suffix} {headline.label.toLowerCase()} at Go Go Gorgeous
+                    </p>
+                  </div>
                 </div>
               </Reveal>
-            );
-          })}
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
+  );
+}
+
+function JobCard({ job }: { job: (typeof experience)[number] }) {
+  const [open, setOpen] = useState(false);
+  const extra = job.highlights.length - VISIBLE;
+  const shown = open ? job.highlights : job.highlights.slice(0, VISIBLE);
+
+  return (
+    <article className="card p-6 transition-shadow duration-500 hover:shadow-[0_24px_48px_-32px_rgba(27,27,27,0.4)] sm:p-7">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <h3 className="text-xl font-semibold tracking-[-0.02em] text-ink">{job.role}</h3>
+        {job.current ? (
+          <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-accent-ink">
+            Current
+          </span>
+        ) : null}
+      </div>
+      <p className="mt-1.5 text-[0.9375rem] font-medium text-ink/80">
+        {job.url ? (
+          <a href={job.url} target="_blank" rel="noreferrer" className="hover:text-accent-ink hover:underline">
+            {job.company}
+          </a>
+        ) : (
+          job.company
+        )}
+      </p>
+      <p className="mt-1 text-sm text-muted">
+        {job.period} · {job.location}
+      </p>
+
+      <ul className="mt-5 grid gap-2.5">
+        {shown.map((point) => (
+          <li key={point} className="flex gap-3 text-sm leading-relaxed text-muted">
+            <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+            {/* One inline box, so the no-wrap pieces flow as text, not as flex items. */}
+            <span>{keepHyphens(point)}</span>
+          </li>
+        ))}
+      </ul>
+
+      {extra > 0 ? (
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink hover:underline"
+        >
+          <Icon name={open ? "close" : "plus"} size={15} />
+          {open ? "Show less" : `${extra} more`}
+        </button>
+      ) : null}
+    </article>
   );
 }

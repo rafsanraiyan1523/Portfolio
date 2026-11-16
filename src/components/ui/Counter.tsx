@@ -1,6 +1,7 @@
 "use client";
 
-import { useInView, useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion as useReducedMotion } from "@/lib/hooks";
+import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 /**
