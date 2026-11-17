@@ -4,6 +4,7 @@ import Icon, { WhatsAppIcon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { metrics, person, skills } from "@/lib/data";
+import { bookCallHref } from "@/lib/booking";
 import { keepHyphens } from "@/lib/typography";
 
 const icons: Record<(typeof skills)[number]["group"], IconName> = {
@@ -106,7 +107,12 @@ export default function Impact() {
                 </Button>
                 <p className="mt-4 text-center text-xs text-white/55">
                   Need a full-time hire instead?{" "}
-                  <a href="#contact" className="font-semibold text-white underline-offset-4 hover:underline">
+                  <a
+                    href={bookCallHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-semibold text-white underline-offset-4 hover:underline"
+                  >
                     Book a call
                   </a>
                 </p>

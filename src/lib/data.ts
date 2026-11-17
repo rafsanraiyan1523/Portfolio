@@ -251,8 +251,8 @@ export const projects: readonly Project[] = [
     accent: "#7C6BFF",
     ink: "#ffffff",
     links: [{ label: "Live site", href: "https://r3-studio.vercel.app/" }],
-    image: "/projects/r3-studio-live.png",
-    imageSize: [1440, 1500],
+    image: "/projects/r3-studio-hero.png",
+    imageSize: [1621, 910],
   },
   {
     id: "e-lectronix",

@@ -7,6 +7,7 @@ import Button from "@/components/ui/Button";
 import Icon, { WhatsAppIcon } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import { person } from "@/lib/data";
+import { bookCallHref } from "@/lib/booking";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -130,7 +131,10 @@ export default function Contact() {
             day, usually sooner.
           </p>
           <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <Button href={`mailto:${person.email}`} variant="solid" icon="mail">
+            <Button href={bookCallHref} variant="solid" icon="video">
+              Book a call
+            </Button>
+            <Button href={`mailto:${person.email}`} variant="outline" icon="mail">
               Email me
             </Button>
             <Button href={`tel:${person.phoneHref}`} variant="outline" icon="phone">
