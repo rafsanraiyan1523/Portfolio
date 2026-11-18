@@ -742,9 +742,15 @@ export default function RidgelineDitherFooter({
       awake = (age >= 0 && age < 3400) || age < 0 || settling || (!reduced && o.drift > 0)
     }
 
-    const busy = () => {
+    /**
+     * Minimum ms between redraws. Full rate only while the pointer is actually
+     * playing with the range; the reveal runs at ~30 fps (it is usually seen
+     * mid-scroll, where main-thread time matters most) and the idle mist at ~15.
+     */
+    const drawInterval = () => {
+      if (inside || Math.abs(windV) > 0.002 || Math.abs(pt - pe) > 0.001) return 0
       const age = revealAt.current === null ? -1 : performance.now() - revealAt.current
-      return (age >= 0 && age < 3400) || inside || Math.abs(windV) > 0.002 || Math.abs(pt - pe) > 0.001
+      return age >= 0 && age < 3400 ? 33 : 66
     }
 
     const loop = (now: number) => {
@@ -757,7 +763,10 @@ export default function RidgelineDitherFooter({
       }
       // Full rate while revealing or under the pointer; the idle drift is slow
       // enough that every other frame reads the same.
-      if (busy() || now - lastDraw > 32) {
+      // This canvas is drawn by JavaScript on the main thread, where every
+      // millisecond competes with scrolling, so it redraws only as often as
+      // the moment needs (see drawInterval).
+      if (now - lastDraw >= drawInterval() - 2) {
         draw(now)
         lastDraw = now
       }

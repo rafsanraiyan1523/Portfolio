@@ -34,6 +34,7 @@ export default function Footer() {
       preset="crimson"
       seed={11}
       ridges={6}
+      pixel={3}
       name={person.name}
       brandHref="#top"
       logo={

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import Icon from "@/components/ui/Icon";
 import { navLinks, person } from "@/lib/data";
@@ -10,50 +10,72 @@ import { cn } from "@/lib/utils";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Tracks which section is under the nav so its link can carry the underline.
- * Reads scroll position directly (the last section whose top has passed 40% of
- * the viewport) rather than an IntersectionObserver band, so a long jump, a
- * section taller than the band, or the footer at the very bottom can never
- * leave a stale link lit.
+ * Tracks which section is under the nav so its link can carry the underline,
+ * and whether the page has scrolled past the top (for the nav's solid state).
+ *
+ * Section offsets are measured once and again only when the page's height
+ * changes (images load, an accordion opens), so scrolling itself reads no
+ * layout: each frame compares cached numbers against scrollY. React state is
+ * touched only when the answer actually changes, never on every scroll event.
  */
-function useActiveSection(ids: string[]) {
+function useScrollState(ids: string[]) {
   const [active, setActive] = useState(ids[0]);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     let raf = 0;
-    const measure = () => {
+    let tops: [string, number][] = [];
+    let lastActive = "";
+    let lastScrolled: boolean | null = null;
+
+    const measureOffsets = () => {
+      tops = ids
+        .map((id) => [id, document.getElementById(id)] as const)
+        .filter((pair): pair is readonly [string, HTMLElement] => Boolean(pair[1]))
+        .map(([id, el]) => [id, el.getBoundingClientRect().top + window.scrollY] as [string, number])
+        .sort((a, b) => a[1] - b[1]);
+    };
+
+    const update = () => {
       raf = 0;
-      const line = window.innerHeight * 0.4;
-      const atBottom =
-        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+      const y = window.scrollY;
+      const line = y + window.innerHeight * 0.4;
       let current = ids[0];
-      let best = -Infinity;
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top;
-        if (top <= line && top > best) {
-          best = top;
-          current = id;
-        }
+      for (const [id, top] of tops) if (top <= line) current = id;
+      if (y + window.innerHeight >= document.documentElement.scrollHeight - 4) current = "contact";
+      const next = parentOf[current] ?? current;
+      if (next !== lastActive) {
+        lastActive = next;
+        setActive(next);
       }
-      if (atBottom) current = "contact";
-      setActive(parentOf[current] ?? current);
+      const isScrolled = y > 40;
+      if (isScrolled !== lastScrolled) {
+        lastScrolled = isScrolled;
+        setScrolled(isScrolled);
+      }
     };
     const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(measure);
+      if (!raf) raf = requestAnimationFrame(update);
     };
-    measure();
+    const remeasure = () => {
+      measureOffsets();
+      onScroll();
+    };
+
+    remeasure();
+    const ro = new ResizeObserver(remeasure);
+    ro.observe(document.body);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", remeasure);
     return () => {
       cancelAnimationFrame(raf);
+      ro.disconnect();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", remeasure);
     };
   }, [ids]);
 
-  return active;
+  return { active, scrolled };
 }
 
 // Sections without their own nav link light up the item they sit under.
@@ -66,16 +88,8 @@ const parentOf: Record<string, string> = {
 const sectionIds = [...navLinks.map((l) => l.href.slice(1)), ...Object.keys(parentOf)];
 
 export default function Nav() {
-  const active = useActiveSection(sectionIds);
+  const { active, scrolled } = useScrollState(sectionIds);
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -86,15 +100,14 @@ export default function Nav() {
 
   return (
     <header className="fixed inset-x-0 top-4 z-[100] flex justify-center px-3 sm:top-6">
-      <motion.nav
+      {/* CSS entrance (.anim-in): visible even before scripts load. */}
+      <nav
         aria-label="Primary"
-        initial={{ y: -24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: EASE }}
+        style={{ "--from": "-24px" } as CSSProperties}
         className={cn(
-          "relative w-full max-w-[50rem] rounded-full border border-white/5 text-white transition-[background-color,box-shadow,backdrop-filter] duration-500",
+          "anim-in relative w-full max-w-[50rem] rounded-full border border-white/5 text-white transition-[background-color,box-shadow] duration-500",
           scrolled
-            ? "bg-[#1b1b1b]/80 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+            ? "bg-[#1b1b1b]/95 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.55)]"
             : "bg-black shadow-[0_18px_40px_-20px_rgba(0,0,0,0.45)]",
         )}
       >
@@ -192,7 +205,7 @@ export default function Nav() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
     </header>
   );
 }

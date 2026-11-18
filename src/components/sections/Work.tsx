@@ -113,7 +113,7 @@ function ProjectCard({ project, priority }: { project: Project; priority?: boole
             className="h-auto max-h-full w-auto max-w-full rounded-xl shadow-[0_20px_40px_-18px_rgba(27,27,27,0.4)] ring-1 ring-black/5 transition-transform duration-[1.2s] ease-out group-hover:-translate-y-1.5 group-hover:scale-[1.015]"
           />
         </div>
-        <span className="label absolute left-3 top-3 rounded-full bg-card/95 px-3 py-1.5 text-ink shadow-sm backdrop-blur-sm">
+        <span className="label absolute left-3 top-3 rounded-full bg-card px-3 py-1.5 text-ink shadow-sm">
           {project.group}
         </span>
       </div>

@@ -8,7 +8,7 @@ import { usePrefersReducedMotion } from "@/lib/hooks";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Rise + un-blur, once, when the element scrolls into view. It starts
+ * Rise + fade, once, when the element scrolls into view. It starts
  * partly visible so nothing ever reads as missing while it waits.
  */
 export default function Reveal({
@@ -29,8 +29,10 @@ export default function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0.25, y, filter: "blur(6px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      // Opacity and transform only: both run on the compositor, so a section
+      // entering never forces a repaint (an animated blur filter would).
+      initial={{ opacity: 0.25, y }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
       transition={reduced ? { duration: 0 } : { duration: 0.9, delay, ease: EASE }}
     >

@@ -7,12 +7,23 @@ import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+/**
+ * When the words rise:
+ * - "view" (default): the first time the line scrolls into view, driven by Motion.
+ * - "load": straight away, driven by a CSS keyframe (.anim-in in globals.css).
+ *   Use it above the fold: it runs before hydration, in a throttled tab, and with
+ *   JavaScript off, so the line can never be stranded at opacity 0.
+ */
+type Trigger = "view" | "load";
+
+const loadStyle = (delay: number, from: string): CSSProperties =>
+  ({ "--delay": `${delay}s`, "--from": from }) as CSSProperties;
+
 /* ---------------- WordsPullUp ---------------- */
 
 /**
- * Each word rises a fraction of an em and fades in, one after another, the
- * first time the line scrolls into view. Words stay real text, so the line
- * reads and wraps like any other heading.
+ * Each word rises a fraction of an em and fades in, one after another. Words
+ * stay real text, so the line reads and wraps like any other heading.
  */
 export function WordsPullUp({
   text,
@@ -20,6 +31,7 @@ export function WordsPullUp({
   showAsterisk = false,
   style,
   delay = 0.1,
+  trigger = "view",
 }: {
   text: string;
   className?: string;
@@ -27,6 +39,7 @@ export function WordsPullUp({
   style?: CSSProperties;
   /** Seconds before the first word moves. */
   delay?: number;
+  trigger?: Trigger;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true });
@@ -36,6 +49,27 @@ export function WordsPullUp({
     <span ref={ref} className={cn("inline-flex flex-wrap", className)} style={style}>
       {words.map((word, i) => {
         const isLast = i === words.length - 1;
+        const asterisk =
+          showAsterisk && isLast ? (
+            <span aria-hidden className="absolute -right-[0.3em] top-[0.62em] text-[0.31em] leading-none">
+              *
+            </span>
+          ) : null;
+        const gap = { marginRight: isLast ? 0 : "0.25em" };
+
+        if (trigger === "load") {
+          return (
+            <span
+              key={`${word}-${i}`}
+              className="anim-in relative inline-block"
+              style={{ ...gap, ...loadStyle(delay + i * 0.08, "0.28em") }}
+            >
+              {word}
+              {asterisk}
+            </span>
+          );
+        }
+
         return (
           <motion.span
             key={`${word}-${i}`}
@@ -43,14 +77,10 @@ export function WordsPullUp({
             animate={isInView ? { y: 0, opacity: 1 } : undefined}
             transition={{ duration: 0.9, delay: delay + i * 0.08, ease: EASE }}
             className="relative inline-block"
-            style={{ marginRight: isLast ? 0 : "0.25em" }}
+            style={gap}
           >
             {word}
-            {showAsterisk && isLast ? (
-              <span aria-hidden className="absolute -right-[0.3em] top-[0.62em] text-[0.31em] leading-none">
-                *
-              </span>
-            ) : null}
+            {asterisk}
           </motion.span>
         );
       })}
@@ -71,11 +101,13 @@ export function WordsPullUpMultiStyle({
   className,
   style,
   delay = 0,
+  trigger = "view",
 }: {
   segments: PullUpSegment[];
   className?: string;
   style?: CSSProperties;
   delay?: number;
+  trigger?: Trigger;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true });
@@ -89,18 +121,32 @@ export function WordsPullUpMultiStyle({
 
   return (
     <span ref={ref} className={cn("inline-flex flex-wrap", className)} style={style}>
-      {words.map((w, i) => (
-        <motion.span
-          key={`${w.word}-${i}`}
-          initial={{ y: 20, opacity: 0 }}
-          animate={isInView ? { y: 0, opacity: 1 } : undefined}
-          transition={{ duration: 0.6, delay: delay + i * 0.08, ease: EASE }}
-          className={cn("inline-block", w.className)}
-          style={{ marginRight: i === words.length - 1 ? 0 : "0.25em" }}
-        >
-          {w.word}
-        </motion.span>
-      ))}
+      {words.map((w, i) => {
+        const gap = { marginRight: i === words.length - 1 ? 0 : "0.25em" };
+        if (trigger === "load") {
+          return (
+            <span
+              key={`${w.word}-${i}`}
+              className={cn("anim-in inline-block", w.className)}
+              style={{ ...gap, ...loadStyle(delay + i * 0.08, "20px") }}
+            >
+              {w.word}
+            </span>
+          );
+        }
+        return (
+          <motion.span
+            key={`${w.word}-${i}`}
+            initial={{ y: 20, opacity: 0 }}
+            animate={isInView ? { y: 0, opacity: 1 } : undefined}
+            transition={{ duration: 0.6, delay: delay + i * 0.08, ease: EASE }}
+            className={cn("inline-block", w.className)}
+            style={gap}
+          >
+            {w.word}
+          </motion.span>
+        );
+      })}
     </span>
   );
 }

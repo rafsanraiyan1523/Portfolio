@@ -48,7 +48,7 @@ export default function About() {
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="block h-auto w-full"
             />
-            <div className="absolute inset-x-4 bottom-4 flex items-center justify-between gap-3 rounded-2xl bg-black/70 px-5 py-4 text-white backdrop-blur-md sm:inset-x-6 sm:bottom-6">
+            <div className="absolute inset-x-4 bottom-4 flex items-center justify-between gap-3 rounded-2xl bg-black/75 px-5 py-4 text-white sm:inset-x-6 sm:bottom-6">
               <div>
                 <p className="text-base font-semibold">{person.name}</p>
                 <p className="text-xs text-white/75">{person.title}</p>

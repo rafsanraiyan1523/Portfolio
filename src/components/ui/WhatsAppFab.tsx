@@ -15,13 +15,27 @@ export default function WhatsAppFab() {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    const update = () => setShown(window.scrollY > window.innerHeight * 0.7);
+    // One check per frame at most, and React only hears about a change.
+    let raf = 0;
+    let last: boolean | null = null;
+    const update = () => {
+      raf = 0;
+      const next = window.scrollY > window.innerHeight * 0.7;
+      if (next !== last) {
+        last = next;
+        setShown(next);
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 

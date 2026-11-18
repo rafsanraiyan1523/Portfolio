@@ -68,6 +68,26 @@
   }
 }
 
+/* Entrance for above-the-fold content. Pure CSS, so it runs the moment the
+   HTML arrives, before (or without) JavaScript: nothing above the fold can be
+   left invisible by a slow hydration, a throttled tab or a strict browser.
+   Set --delay and --from (start offset) per element. */
+@keyframes pull-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--from, 0.28em), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.anim-in {
+  animation: pull-up 0.9s var(--ease-out-expo) both;
+  animation-delay: var(--delay, 0s);
+}
+
 /* Soft expanding ring behind the floating WhatsApp button. */
 @keyframes ring {
   0% {
@@ -245,5 +265,10 @@ html.lenis body {
   .marquee-track {
     animation: none !important;
     transform: none !important;
+  }
+
+  /* Entrances simply appear: no delay, no travel. */
+  .anim-in {
+    animation: none !important;
   }
 }
