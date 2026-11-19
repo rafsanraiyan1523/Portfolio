@@ -83,7 +83,6 @@ const parentOf: Record<string, string> = {
   toolkit: "work",
   process: "experience",
   credentials: "experience",
-  faq: "contact",
 };
 const sectionIds = [...navLinks.map((l) => l.href.slice(1)), ...Object.keys(parentOf)];
 
@@ -115,7 +114,7 @@ export default function Nav() {
           <a
             href="#top"
             aria-label={`${person.name}, back to top`}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-[0.8125rem] font-bold tracking-tight text-white ring-2 ring-white/10 transition-transform duration-300 hover:scale-105"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-accent text-[0.8125rem] font-bold tracking-tight text-white ring-2 ring-white/10 transition-transform duration-300 hover:scale-105"
           >
             {person.initials}
           </a>
@@ -159,7 +158,7 @@ export default function Nav() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="ml-auto inline-flex h-10 items-center gap-2 rounded-full border border-white/20 px-4 text-[0.6875rem] font-bold uppercase tracking-[0.06em] md:hidden"
+            className="ml-auto inline-flex h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-[0.6875rem] font-bold uppercase tracking-[0.06em] md:hidden"
           >
             <Icon name={open ? "close" : "menu"} size={16} />
             {open ? "Close" : "Menu"}

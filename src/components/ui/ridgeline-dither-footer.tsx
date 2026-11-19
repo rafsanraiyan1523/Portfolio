@@ -427,6 +427,13 @@ const RDF_CSS = `
   .rdf-brand { grid-column: 1 / -1; }
   .rdf-bar { flex-direction: column; align-items: flex-start; gap: 6px; }
   .rdf-scene { margin-top: -40px; }
+  /* Phones: every link and icon is a full 44px tap target. */
+  .rdf-col ul { gap: 0; }
+  .rdf-col h3 { margin-bottom: 8px; }
+  .rdf-link { min-height: 44px; min-width: 44px; }
+  .rdf-logo { min-height: 44px; }
+  .rdf-social { margin-left: -12px; gap: 2px; }
+  .rdf-social a { width: 44px; height: 44px; border-radius: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .rdf-r, .rdf-frame::before, .rdf-frame::after, .rdf-link, .rdf-link::before, .rdf-social a, .rdf-mark rect { transition: none; }

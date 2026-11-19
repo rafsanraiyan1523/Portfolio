@@ -199,7 +199,7 @@ html.lenis body {
 
 /* Vertical rhythm for full sections. */
 @utility section-y {
-  padding-block: 5rem;
+  padding-block: 4.25rem;
 
   @media (width >= 40rem) {
     padding-block: 7rem;

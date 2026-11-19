@@ -1,6 +1,7 @@
 import Button from "@/components/ui/Button";
 import Counter from "@/components/ui/Counter";
 import Icon, { WhatsAppIcon, type IconName } from "@/components/ui/Icon";
+import MobileCollapse from "@/components/ui/MobileCollapse";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { metrics, person, skills } from "@/lib/data";
@@ -44,19 +45,21 @@ export default function Impact() {
 
         <div className="mt-14 grid gap-6 sm:mt-20 lg:grid-cols-[1.35fr_1fr] lg:gap-10">
           {/* ---------------- Skill groups ---------------- */}
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+          {/* Phones: results first (order), then four groups with a "show all" toggle. */}
+          <div>
+          <MobileCollapse initial={4} noun="skill groups" dark className="grid gap-3 sm:grid-cols-2 sm:gap-5">
             {skills.map((group, i) => (
-              <Reveal key={group.group} delay={(i % 2) * 0.06}>
-                <div className="h-full rounded-[1.75rem] border border-white/10 bg-night-2 p-6 transition-colors duration-500 hover:border-white/25 sm:p-7">
+              <Reveal key={group.group} delay={(i % 2) * 0.06} className="h-full">
+                <div className="h-full rounded-[1.5rem] border border-white/10 bg-night-2 p-5 transition-colors duration-500 hover:border-white/25 sm:rounded-[1.75rem] sm:p-7">
                   <div className="flex items-center gap-3">
                     <Icon name={icons[group.group]} size={20} className="text-accent-glow" />
-                    <h3 className="text-lg font-bold tracking-[-0.01em]">{group.group}</h3>
+                    <h3 className="text-base font-bold tracking-[-0.01em] sm:text-lg">{group.group}</h3>
                   </div>
-                  <ul className="mt-5 flex flex-wrap gap-2">
+                  <ul className="mt-4 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2">
                     {group.items.map((item) => (
                       <li
                         key={item}
-                        className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[0.8125rem] text-white/85"
+                        className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/85 sm:rounded-xl sm:px-3 sm:py-2 sm:text-[0.8125rem]"
                       >
                         {item}
                       </li>
@@ -65,17 +68,18 @@ export default function Impact() {
                 </div>
               </Reveal>
             ))}
+          </MobileCollapse>
           </div>
 
           {/* ---------------- Impact summary ---------------- */}
-          <div>
+          <div className="max-lg:order-first">
             <Reveal className="lg:sticky lg:top-28">
               <div className="relative overflow-hidden rounded-[2rem] border border-accent/30 bg-gradient-to-b from-[#2a0711] via-[#120306] to-black p-6 sm:p-9">
                 <Icon
                   name="trend"
                   size={64}
                   strokeWidth={1.25}
-                  className="absolute right-6 top-6 text-accent/40"
+                  className="absolute right-6 top-6 hidden text-accent/40 sm:block"
                 />
                 <p className="label text-accent-glow">Impact summary</p>
                 <p className="mt-3 max-w-xs text-sm text-white/65">
@@ -111,7 +115,7 @@ export default function Impact() {
                     href={bookCallHref}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-semibold text-white underline-offset-4 hover:underline"
+                    className="inline-flex min-h-11 items-center font-semibold text-white underline-offset-4 hover:underline"
                   >
                     Book a call
                   </a>

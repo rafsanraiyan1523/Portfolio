@@ -496,11 +496,11 @@ export const credentials = [
   {
     period: "2023",
     issuer: "IEEE CS Publication",
-    title: "AI Chatbot: An Interactive Model for Human-Robot Interaction",
+    title: "The Old Man's Mate",
     detail:
-      "Undergraduate NLP and conversational AI research, published under IEEE Computer Society academic activities. Supervised by Asst. Prof. AKM Mahbubur Rahman, Dept. of CSE, IUB.",
+      "Co-authored with five classmates in the Department of CSE, Independent University, Bangladesh: a companion robot for elderly care covering housekeeping, companionship, medication reminders and health checks such as blood pressure and heart-rate measurement.",
     tag: "Research",
-    href: "https://drive.google.com/file/d/1lWvVkujKqGY3lPZ_se2wr8D7gtLFa0y0/view",
+    href: "https://drive.google.com/file/d/1yjX7wUIshZ9AkWG-Phqp2r0STYkCW_8C/view?usp=sharing",
   },
   {
     period: "Jun — Sep 2023",
@@ -521,37 +521,6 @@ export const additional = {
   memberships: ["IEEE Computer Society — General Member"],
   activities: ["AmariSchool Campus Ambassador — student outreach and community engagement"],
 } as const;
-
-/* ------------------------------------------------------------------ */
-/*  FAQ                                                                */
-/* ------------------------------------------------------------------ */
-
-export const faqs = [
-  {
-    q: "What kind of work are you looking for?",
-    a: "Full-stack development roles and e-commerce manager roles, equally — remote, on-site or relocation. I’m based in Dhaka (UTC+6) and have spent a year working async across BD–UK time zones, so distributed teams are familiar territory too.",
-  },
-  {
-    q: "What does your stack actually look like?",
-    a: "Next.js and React on the front, Laravel or Django on the back, MySQL or Supabase underneath. On the commerce side, WooCommerce and Shopify with custom themes and plugins. Deployment through Vercel, cPanel or plain Linux, with Git throughout.",
-  },
-  {
-    q: "You lead e-commerce and write code — how does that work?",
-    a: "It’s the same job from two angles. At Go Go Gorgeous I ran the department — operations, campaigns, cross-team coordination — and I was also the one shipping the theme changes, checkout optimisations and performance fixes. Now, as IT Officer at BAPI, I’m applying that same mix of hands-on engineering and operations to the association’s systems.",
-  },
-  {
-    q: "Can you take on SEO and performance work on its own?",
-    a: "Yes. Technical SEO, Core Web Vitals, schema markup and CRO experiments are a standalone engagement I run regularly — most recently driving 65% organic traffic growth and a 45% Core Web Vitals improvement on a live store.",
-  },
-  {
-    q: "How do you handle data and reporting?",
-    a: "I’ve automated 8 reporting pipelines with Apps Script, validated 500K+ structured records at 99.8% integrity, and built 5 interactive KPI dashboards. GA4, Search Console, Tag Manager and Power BI are part of the standard kit.",
-  },
-  {
-    q: "What’s the fastest way to reach you?",
-    a: "Email at rafsanraiyan00@gmail.com, or the form below — either lands in the same inbox. I reply within a working day, usually sooner.",
-  },
-] as const;
 
 /* ------------------------------------------------------------------ */
 /*  Navigation                                                         */

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Icon from "@/components/ui/Icon";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -16,7 +16,24 @@ type Filter = "All" | (typeof groups)[number];
 
 export default function Work() {
   const [filter, setFilter] = useState<Filter>("All");
+  // Phones get a swipeable row (see the list below); this tracks the card in view.
+  const trackRef = useRef<HTMLUListElement>(null);
+  const [slide, setSlide] = useState(0);
   const shown = filter === "All" ? projects : projects.filter((p) => p.group === filter);
+
+  // A new filter starts the row from its first card.
+  useEffect(() => {
+    trackRef.current?.scrollTo({ left: 0 });
+  }, [filter]);
+
+  const onTrackScroll = () => {
+    const el = trackRef.current;
+    const first = el?.firstElementChild as HTMLElement | null;
+    if (!el || !first) return;
+    const step = first.offsetWidth + 16; // card + gap-4
+    const i = Math.round(el.scrollLeft / step);
+    setSlide((prev) => (prev === i ? prev : i));
+  };
 
   const chips: { label: Filter; count: number }[] = [
     { label: "All", count: projects.length },
@@ -35,7 +52,9 @@ export default function Work() {
         <div
           role="group"
           aria-label="Filter projects"
-          className="mx-auto mt-10 flex max-w-3xl flex-wrap justify-center gap-2.5 sm:mt-12 sm:gap-3"
+          // Phones: one swipeable row of chips. From sm up: centred and wrapping.
+          data-lenis-prevent
+          className="-mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:max-w-3xl sm:flex-wrap sm:justify-center sm:gap-3 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {chips.map((chip) => {
             const active = filter === chip.label;
@@ -46,7 +65,7 @@ export default function Work() {
                 aria-pressed={active}
                 onClick={() => setFilter(chip.label)}
                 className={cn(
-                  "inline-flex h-11 items-center gap-2 rounded-full border px-5 text-sm font-medium transition-all duration-300",
+                  "inline-flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 text-sm font-medium transition-all duration-300",
                   active
                     ? "border-black bg-black text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.6)]"
                     : "border-line-strong bg-card text-muted hover:border-ink hover:text-ink",
@@ -61,7 +80,18 @@ export default function Work() {
           })}
         </div>
 
-        <motion.ul layout className="mx-auto mt-12 grid max-w-[72rem] gap-6 sm:mt-16 md:grid-cols-2 lg:gap-7">
+        {/* Phones: one swipeable row with the next card peeking in (scroll snap).
+            From md up: the two-column grid. It is `relative` so the cards'
+            absolutely positioned screen-reader text stays inside the row's
+            scroll clip instead of widening the whole page. */}
+        <motion.ul
+          ref={trackRef}
+          layout
+          onScroll={onTrackScroll}
+          data-lenis-prevent
+          aria-label="Projects"
+          className="relative -mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-smooth px-4 pb-3 [scrollbar-width:none] sm:-mx-6 sm:mt-16 sm:px-6 md:mx-auto md:grid md:max-w-[72rem] md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0 lg:gap-7 [&::-webkit-scrollbar]:hidden"
+        >
           <AnimatePresence mode="popLayout" initial={false}>
             {shown.map((project, i) => (
               <motion.li
@@ -69,6 +99,7 @@ export default function Work() {
                 layout
                 // An odd card out on the last row sits centred, not stranded on the left.
                 className={cn(
+                  "w-[86%] shrink-0 snap-start sm:w-[70%] md:w-auto",
                   shown.length % 2 === 1 &&
                     i === shown.length - 1 &&
                     "md:col-span-2 md:mx-auto md:w-[calc(50%-0.75rem)] lg:w-[calc(50%-0.875rem)]",
@@ -83,6 +114,24 @@ export default function Work() {
             ))}
           </AnimatePresence>
         </motion.ul>
+
+        {/* Where you are in the row, phones only. */}
+        <div className="mt-5 flex items-center justify-center gap-4 md:hidden" aria-hidden="true">
+          <div className="flex gap-1.5">
+            {shown.map((p, i) => (
+              <span
+                key={p.id}
+                className={cn(
+                  "h-1.5 rounded-full transition-all duration-300",
+                  i === Math.min(slide, shown.length - 1) ? "w-6 bg-ink" : "w-1.5 bg-line-strong",
+                )}
+              />
+            ))}
+          </div>
+          <span className="text-xs font-medium tabular-nums text-muted">
+            {Math.min(slide, shown.length - 1) + 1} / {shown.length} · swipe
+          </span>
+        </div>
       </div>
     </section>
   );
@@ -93,7 +142,7 @@ function ProjectCard({ project, priority }: { project: Project; priority?: boole
   const [w, h] = project.imageSize;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-line bg-card transition-shadow duration-500 hover:shadow-[0_30px_60px_-34px_rgba(27,27,27,0.45)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-line bg-card transition-shadow duration-500 hover:shadow-[0_30px_60px_-34px_rgba(27,27,27,0.45)]">
       {/* Every screenshot shows whole: it keeps its own shape and sits centred
           on a tint of the project's accent, so nothing is ever cropped. */}
       <div
@@ -124,10 +173,10 @@ function ProjectCard({ project, priority }: { project: Project; priority?: boole
         <span aria-hidden className="mt-4 block h-px w-10 bg-line-strong" />
         <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted">{keepHyphens(project.description)}</p>
 
-        <dl className="mt-6 grid grid-cols-3 gap-2">
+        <dl className="mt-6 grid grid-cols-3 gap-1.5 sm:gap-2">
           {project.results.map((r) => (
-            <div key={r.label} className="flex flex-col-reverse rounded-xl bg-paper-2/70 px-3 py-3">
-              <dt className="mt-1 text-xs leading-snug text-muted">{r.label}</dt>
+            <div key={r.label} className="flex flex-col-reverse rounded-xl bg-paper-2/70 px-2.5 py-2.5 sm:px-3 sm:py-3">
+              <dt className="mt-1 text-[0.6875rem] leading-tight text-muted sm:text-xs sm:leading-snug">{r.label}</dt>
               <dd className="text-base font-bold tracking-tight text-ink">{r.value}</dd>
             </div>
           ))}
@@ -142,14 +191,14 @@ function ProjectCard({ project, priority }: { project: Project; priority?: boole
         </ul>
 
         {primary ? (
-          <div className="mt-auto flex flex-wrap gap-5 pt-6">
+          <div className="mt-auto flex flex-wrap gap-x-5 pt-4">
             {project.links?.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group/link inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-accent-ink"
+                className="group/link inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-semibold text-accent-ink"
               >
                 {link.label}
                 <span className="sr-only"> for {project.name}</span>

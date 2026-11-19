@@ -29,6 +29,8 @@ export default function Contact() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  /** Pre-filled mailto link, offered only when sending fails. */
+  const [mailto, setMailto] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,6 +39,25 @@ export default function Contact() {
 
     setStatus("sending");
     setError(null);
+    setMailto(null);
+
+    // If delivery fails, the visitor can still send the same message from
+    // their own mail app in one click; nothing they typed is lost.
+    const directMail = () => {
+      const subject = encodeURIComponent(`Portfolio enquiry from ${data.name || "the website"}`);
+      const body = encodeURIComponent(
+        [
+          `Name: ${data.name || ""}`,
+          `Email: ${data.email || ""}`,
+          `Company: ${data.company || "—"}`,
+          `About: ${data.engagement || "—"}`,
+          `Budget: ${data.budget || "—"}`,
+          "",
+          data.message || "",
+        ].join("\n"),
+      );
+      return `mailto:${person.email}?subject=${subject}&body=${body}`;
+    };
 
     try {
       const res = await fetch("/api/contact", {
@@ -51,34 +72,15 @@ export default function Contact() {
         return;
       }
 
-      const payload = (await res.json().catch(() => ({}))) as { error?: string; fallback?: boolean };
-
-      // Delivery isn't wired up yet: hand off to the visitor's mail client
-      // so the message still reaches the inbox.
-      if (payload.fallback) {
-        const subject = encodeURIComponent(`Portfolio enquiry — ${data.name || ""}`);
-        const body = encodeURIComponent(
-          [
-            `Name: ${data.name || ""}`,
-            `Email: ${data.email || ""}`,
-            `Company: ${data.company || "—"}`,
-            `Engagement: ${data.engagement || "—"}`,
-            `Budget: ${data.budget || "—"}`,
-            "",
-            data.message || "",
-          ].join("\n"),
-        );
-        window.location.href = `mailto:${person.email}?subject=${subject}&body=${body}`;
-        setStatus("sent");
-        form.reset();
-        return;
-      }
-
+      const payload = (await res.json().catch(() => ({}))) as { error?: string };
       setStatus("error");
-      setError(payload.error ?? "Something went wrong. Please try again, or email me directly.");
+      setError(payload.error ?? "Your message couldn't be sent just now. Please email me directly instead.");
+      // A validation problem is the visitor's to fix; anything else gets the direct-email escape hatch.
+      if (res.status !== 422) setMailto(directMail());
     } catch {
       setStatus("error");
-      setError("Network error. Please email me directly.");
+      setError("You seem to be offline. Please check your connection, or email me directly.");
+      setMailto(directMail());
     }
   }
 
@@ -134,27 +136,38 @@ export default function Contact() {
             <Button href={bookCallHref} variant="solid" icon="video">
               Book a call
             </Button>
-            <Button href={`mailto:${person.email}`} variant="outline" icon="mail">
+            {/* Phones: email and call are the rows right below, so no duplicate buttons. */}
+            <Button href={`mailto:${person.email}`} variant="outline" icon="mail" className="max-sm:hidden">
               Email me
             </Button>
-            <Button href={`tel:${person.phoneHref}`} variant="outline" icon="phone">
+            <Button href={`tel:${person.phoneHref}`} variant="outline" icon="phone" className="max-sm:hidden">
               Call {person.phone}
             </Button>
           </div>
         </Reveal>
 
-        <ul className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
+        <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:mt-12 sm:grid-cols-3 sm:gap-4">
           {channels.map((c, i) => (
             <li key={c.key}>
               <Reveal delay={i * 0.06}>
                 <a
                   href={c.href}
                   {...(c.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
-                  className="card group flex flex-col items-center px-4 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-30px_rgba(27,27,27,0.45)]"
+                  className="card group flex items-center gap-4 px-5 py-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-30px_rgba(27,27,27,0.45)] sm:flex-col sm:gap-0 sm:px-4 sm:py-6 sm:text-center"
                 >
-                  <span className={cn(c.key === "whatsapp" ? "text-[#128c4a]" : "text-accent-ink")}>{c.icon}</span>
-                  <span className="label mt-3 text-muted">{c.label}</span>
-                  <span className="mt-2 break-all text-[0.9375rem] font-semibold text-ink">{c.value}</span>
+                  <span
+                    className={cn(
+                      "grid size-11 shrink-0 place-items-center rounded-full bg-paper-2 sm:size-auto sm:bg-transparent",
+                      c.key === "whatsapp" ? "text-[#128c4a]" : "text-accent-ink",
+                    )}
+                  >
+                    {c.icon}
+                  </span>
+                  <span className="min-w-0 sm:contents">
+                    <span className="label block text-muted sm:mt-3">{c.label}</span>
+                    <span className="mt-1 block break-all text-[0.9375rem] font-semibold text-ink sm:mt-2">{c.value}</span>
+                  </span>
+                  <Icon name="arrowRight" size={16} className="ml-auto shrink-0 text-muted-light sm:hidden" />
                 </a>
               </Reveal>
             </li>
@@ -172,7 +185,7 @@ export default function Contact() {
               <button
                 type="button"
                 onClick={copyEmail}
-                className="inline-flex items-center gap-2 self-start text-sm font-semibold text-accent-ink hover:underline sm:self-auto"
+                className="inline-flex min-h-11 items-center gap-2 self-start text-sm font-semibold text-accent-ink hover:underline sm:self-auto"
               >
                 <Icon name="copy" size={16} />
                 <span aria-live="polite">{copied ? "Email copied" : "Copy email address"}</span>
@@ -244,9 +257,18 @@ export default function Contact() {
                   </label>
 
                   {status === "error" && error ? (
-                    <p role="alert" className="text-sm font-medium text-accent-ink sm:col-span-2">
-                      {error}
-                    </p>
+                    <div role="alert" className="rounded-2xl bg-accent-soft/60 px-4 py-3 sm:col-span-2">
+                      <p className="text-sm font-medium text-accent-ink">{error}</p>
+                      {mailto ? (
+                        <a
+                          href={mailto}
+                          className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-ink underline-offset-4 hover:underline"
+                        >
+                          <Icon name="mail" size={16} />
+                          Send it from your email app instead
+                        </a>
+                      ) : null}
+                    </div>
                   ) : null}
 
                   <div className="sm:col-span-2">

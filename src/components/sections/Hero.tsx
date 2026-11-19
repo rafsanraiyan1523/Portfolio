@@ -84,7 +84,7 @@ export default function Hero() {
               type="button"
               onClick={toggle}
               aria-label={playing ? "Pause background video" : "Play background video"}
-              className="absolute right-3 top-[5.25rem] z-20 grid size-10 place-items-center rounded-full border border-white/15 bg-black/55 text-[#E1E0CC] transition-colors hover:bg-black/75 sm:right-5 sm:top-24 lg:top-7"
+              className="absolute right-3 top-[5.25rem] z-20 grid size-11 place-items-center rounded-full border border-white/15 bg-black/55 text-[#E1E0CC] transition-colors hover:bg-black/75 sm:right-5 sm:top-24 lg:top-7"
             >
               {playing ? (
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden>
@@ -154,7 +154,7 @@ export default function Hero() {
                   href={`https://wa.me/${person.whatsapp}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#E1E0CC] underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#E1E0CC] underline-offset-4 hover:underline"
                 >
                   <WhatsAppIcon size={18} className="text-whatsapp" />
                   WhatsApp me

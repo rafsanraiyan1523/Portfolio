@@ -66,7 +66,7 @@ export default function Services() {
                   Move across the sky to light it up. Tap or click to hang a star.
                 </p>
 
-                <ul className="pointer-events-auto mt-24 rounded-3xl bg-card p-3 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] sm:mt-32 sm:p-5 xl:mt-auto">
+                <ul className="pointer-events-auto mt-16 rounded-3xl bg-card p-3 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] sm:mt-32 sm:p-5 xl:mt-auto">
                   {services.map((service) => (
                     <li key={service.id}>
                       <a

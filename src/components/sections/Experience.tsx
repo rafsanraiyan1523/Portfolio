@@ -30,7 +30,7 @@ export default function Experience() {
           <ol className="relative">
             <span aria-hidden className="absolute bottom-8 left-5 top-8 w-px bg-line-strong" />
             {experience.map((job, i) => (
-              <li key={job.company} className="relative pb-6 pl-16 last:pb-0">
+              <li key={job.company} className="relative pb-5 pl-12 last:pb-0 sm:pb-6 sm:pl-16">
                 <span
                   aria-hidden
                   className={cn(
@@ -48,8 +48,9 @@ export default function Experience() {
           </ol>
 
           {/* ---------------- Now panel ---------------- */}
+          {/* The "right now" panel repeats the current job card, so phones skip it. */}
           {current ? (
-            <div>
+            <div className="hidden lg:block">
               <Reveal className="lg:sticky lg:top-28">
                 <div className="rounded-[2rem] bg-gradient-to-br from-sky to-sky-2 p-5 sm:p-8">
                   <div className="flex items-center gap-3">
@@ -119,7 +120,7 @@ function JobCard({ job }: { job: (typeof experience)[number] }) {
   const shown = open ? job.highlights : job.highlights.slice(0, VISIBLE);
 
   return (
-    <article className="card p-6 transition-shadow duration-500 hover:shadow-[0_24px_48px_-32px_rgba(27,27,27,0.4)] sm:p-7">
+    <article className="card p-5 transition-shadow duration-500 hover:shadow-[0_24px_48px_-32px_rgba(27,27,27,0.4)] sm:p-7">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <h3 className="text-xl font-semibold tracking-[-0.02em] text-ink">{job.role}</h3>
         {job.current ? (
@@ -130,7 +131,7 @@ function JobCard({ job }: { job: (typeof experience)[number] }) {
       </div>
       <p className="mt-1.5 text-[0.9375rem] font-medium text-ink/80">
         {job.url ? (
-          <a href={job.url} target="_blank" rel="noreferrer" className="hover:text-accent-ink hover:underline">
+          <a href={job.url} target="_blank" rel="noreferrer" className="-my-3 inline-block py-3 hover:text-accent-ink hover:underline">
             {job.company}
           </a>
         ) : (
@@ -156,7 +157,7 @@ function JobCard({ job }: { job: (typeof experience)[number] }) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink hover:underline"
+          className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-accent-ink hover:underline"
         >
           <Icon name={open ? "close" : "plus"} size={15} />
           {open ? "Show less" : `${extra} more`}
