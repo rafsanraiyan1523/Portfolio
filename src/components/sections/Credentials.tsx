@@ -29,19 +29,21 @@ export default function Credentials() {
                   <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted">{keepHyphens(c.detail)}</p>
                   <p className="mt-5 text-xs font-semibold uppercase tracking-[0.12em] text-muted">{c.period}</p>
                 </div>
-                <a
-                  href={c.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex h-12 shrink-0 items-center justify-center gap-2.5 self-start rounded-full bg-black px-7 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-white transition-transform duration-300 hover:-translate-y-0.5 lg:self-center"
-                >
-                  {c.tag === "Research" ? "Read the paper" : "View certificate"}
-                  <Icon
-                    name="arrowUpRight"
-                    size={16}
-                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  />
-                </a>
+                {c.href ? (
+                  <a
+                    href={c.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group inline-flex h-12 shrink-0 items-center justify-center gap-2.5 self-start rounded-full bg-black px-7 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-white transition-transform duration-300 hover:-translate-y-0.5 lg:self-center"
+                  >
+                    {c.tag === "Research" ? "Read the paper" : "View certificate"}
+                    <Icon
+                      name="arrowUpRight"
+                      size={16}
+                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </a>
+                ) : null}
               </article>
             </Reveal>
           ))}

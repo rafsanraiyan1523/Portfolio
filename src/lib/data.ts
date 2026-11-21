@@ -511,6 +511,15 @@ export const credentials = [
     tag: "Certification",
     href: "https://drive.google.com/file/d/1kSXflLbDKOlqKLhXt6rE_N-6bkGfEqLU/view",
   },
+  {
+    period: "Online course",
+    issuer: "Ostad",
+    title: "AI-Powered Software Engineering",
+    detail:
+      "Master Claude Code, CI/CD automation and agent workflow: using AI coding agents to build, test and ship software faster.",
+    tag: "Certification",
+    href: "",
+  },
 ] as const;
 
 export const additional = {
